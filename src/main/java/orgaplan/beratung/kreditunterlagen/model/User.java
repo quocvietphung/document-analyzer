@@ -10,16 +10,16 @@ public class User {
     @Column(name = "id", length = 36)
     private String id;
 
-    @Column(name = "companyName")
+    @Column(name = "company_name")
     private String companyName;
 
-    @Column(name = "firstName", nullable = false)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "lastName", nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "phoneNumber", nullable = false)
+    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
     @Column(name = "email", nullable = false)
@@ -34,17 +34,15 @@ public class User {
     @Column(name = "role", nullable = false)
     private String role;
 
-    @Column(name = "privacyPolicyAccepted", nullable = false)
+    @Column(name = "privacy_policy_accepted", nullable = false)
     private Boolean privacyPolicyAccepted;
 
-    @Column(name = "termsAndConditionsAccepted", nullable = false)
+    @Column(name = "terms_and_conditions_accepted", nullable = false)
     private Boolean termsAndConditionsAccepted;
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updatedAt", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-
-    // Constructors, getters, and setters (omitted for brevity)
 }

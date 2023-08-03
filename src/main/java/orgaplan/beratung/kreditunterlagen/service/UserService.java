@@ -8,6 +8,7 @@ import orgaplan.beratung.kreditunterlagen.repository.UserRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -21,6 +22,7 @@ public class UserService {
     @Transactional
     public User createUser(User user) {
         validateRequiredFields(user);
+        user.setId(UUID.randomUUID().toString()); // Generate a unique ID
         hashPassword(user);
         return userRepository.save(user);
     }

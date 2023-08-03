@@ -1,4 +1,3 @@
-
 spring:
   datasource:
     url: jdbc:${DEVELOPMENT_DIALECT}://${DEVELOPMENT_HOST}:${DEVELOPMENT_PORT}/${DEVELOPMENT_DATABASE}

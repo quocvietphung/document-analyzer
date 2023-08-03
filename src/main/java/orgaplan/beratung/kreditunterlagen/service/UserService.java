@@ -3,6 +3,7 @@ package orgaplan.beratung.kreditunterlagen.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.repository.UserRepository;
 
@@ -47,7 +48,9 @@ public class UserService {
                 .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + id));
 
         updateFields(user, updatedUserFields);
-        hashPasswordIfPresent(updatedUserFields);
+        if (updatedUserFields.getPassword() != null) {
+            hashPassword(user);
+        }
         return userRepository.save(user);
     }
 
@@ -58,20 +61,29 @@ public class UserService {
 
     // Helper methods
     private void validateRequiredFields(User user) {
-        // Implement the logic to check required fields and throw an exception if any field is missing.
+        if (user.getFirstName() == null || user.getLastName() == null || user.getEmail() == null
+                || user.getPhoneNumber() == null || user.getUsername() == null || user.getPassword() == null
+                || user.getRole() == null || user.getPrivacyPolicyAccepted() == null || user.getTermsAndConditionsAccepted() == null) {
+            throw new IllegalArgumentException("Missing required fields");
+        }
     }
 
     private void hashPassword(User user) {
-        // Implement the logic to hash the user's password before saving it.
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
     }
 
     private void updateFields(User user, User updatedUserFields) {
-        // Implement the logic to update user fields based on the values in updatedUserFields.
-    }
+        if (updatedUserFields.getFirstName() != null) user.setFirstName(updatedUserFields.getFirstName());
+        if (updatedUserFields.getLastName() != null) user.setLastName(updatedUserFields.getLastName());
+        if (updatedUserFields.getEmail() != null) user.setEmail(updatedUserFields.getEmail());
+        if (updatedUserFields.getPhoneNumber() != null) user.setPhoneNumber(updatedUserFields.getPhoneNumber());
+        if (updatedUserFields.getCompanyName() != null) user.setCompanyName(updatedUserFields.getCompanyName());
+        if (updatedUserFields.getRole() != null) user.setRole(updatedUserFields.getRole());
+        if (updatedUserFields.getPrivacyPolicyAccepted() != null) user.setPrivacyPolicyAccepted(updatedUserFields.getPrivacyPolicyAccepted());
+        if (updatedUserFields.getTermsAndConditionsAccepted() != null) user.setTermsAndConditionsAccepted(updatedUserFields.getTermsAndConditionsAccepted());
 
-    private void hashPasswordIfPresent(User updatedUserFields) {
-        // Implement the logic to hash the password in updatedUserFields if it is present.
+        user.setUpdatedAt(LocalDateTime.now()); // Set updated at timestamp
     }
-
-    // Other methods as needed
 }

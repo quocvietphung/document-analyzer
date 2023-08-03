@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -23,6 +24,8 @@ public class UserService {
     public User createUser(User user) {
         validateRequiredFields(user);
         user.setId(UUID.randomUUID().toString()); // Generate a unique ID
+        user.setCreatedAt(LocalDateTime.now()); // Set created at timestamp
+        user.setUpdatedAt(LocalDateTime.now()); // Set updated at timestamp
         hashPassword(user);
         return userRepository.save(user);
     }

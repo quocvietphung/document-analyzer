@@ -15,7 +15,7 @@
 
 	<!-- Basic project information -->
 	<groupId>orgaplan.beratung</groupId>
-	<artifactId>Kreditunterlagen</artifactId>
+	<artifactId>KreditunterlagenAPI</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>KreditunterlagenAPI</name>
 	<description>KreditunterlagenAPI</description>

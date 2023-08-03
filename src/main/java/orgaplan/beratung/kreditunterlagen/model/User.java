@@ -1,54 +1,50 @@
 package orgaplan.beratung.kreditunterlagen.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Column;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "users")
 public class User {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", length = 36)
     private String id;
 
-    @Column(length = 255)
+    @Column(name = "companyName")
     private String companyName;
 
-    @Column(length = 255, nullable = false)
+    @Column(name = "firstName", nullable = false)
     private String firstName;
 
-    @Column(length = 255, nullable = false)
+    @Column(name = "lastName", nullable = false)
     private String lastName;
 
-    @Column(length = 255, nullable = false)
+    @Column(name = "phoneNumber", nullable = false)
     private String phoneNumber;
 
-    @Column(length = 255, nullable = false)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(length = 255, nullable = false)
+    @Column(name = "username", nullable = false)
     private String username;
 
-    @Column(length = 255, nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(length = 255, nullable = false)
+    @Column(name = "role", nullable = false)
     private String role;
 
-    @Column(nullable = false)
-    private boolean privacyPolicyAccepted;
+    @Column(name = "privacyPolicyAccepted", nullable = false)
+    private Boolean privacyPolicyAccepted;
 
-    @Column(nullable = false)
-    private boolean termsAndConditionsAccepted;
+    @Column(name = "termsAndConditionsAccepted", nullable = false)
+    private Boolean termsAndConditionsAccepted;
 
-    @Column(nullable = false)
+    @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(name = "updatedAt", nullable = false)
     private LocalDateTime updatedAt;
 
-    // Constructors, getters, and setters
+    // Constructors, getters, and setters (omitted for brevity)
 }

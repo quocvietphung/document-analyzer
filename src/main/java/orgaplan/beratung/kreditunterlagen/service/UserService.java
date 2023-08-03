@@ -21,6 +21,19 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public User login(String username, String password) {
+        User user = userRepository.findByUsername(username);
+        if (user != null && isPasswordCorrect(user, password)) {
+            return user;
+        }
+        return null;
+    }
+
+    private boolean isPasswordCorrect(User user, String password) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.matches(password, user.getPassword());
+    }
+
     @Transactional
     public User createUser(User user) {
         validateRequiredFields(user);

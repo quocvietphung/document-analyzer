@@ -6,5 +6,5 @@ import orgaplan.beratung.kreditunterlagen.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
-    // Custom query methods (if needed)
+    User findByUsername(String username);
 }

@@ -72,11 +72,6 @@
 				<groupId>org.flywaydb</groupId>
 				<artifactId>flyway-maven-plugin</artifactId>
 				<version>8.0.3</version>
-				<configuration>
-					<url>jdbc:mysql://your-database-host:port/your-database-name</url>
-					<user>your-database-username</user>
-					<password>your-database-password</password>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

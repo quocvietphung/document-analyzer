@@ -9,9 +9,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("/documents")
@@ -34,9 +36,13 @@ public class DocumentController {
                 return ResponseEntity.status(500).body(Map.of("message", "Failed to upload document."));
             }
 
+            ObjectMapper objectMapper = new ObjectMapper();
+            // Chuyển chuỗi JSON thành một đối tượng Java có thể hiển thị được
+            List<Map<String, String>> documentList = objectMapper.readValue(document.getDocument(), List.class);
+
             Map<String, Object> response = Map.of(
                     "message", "Documents uploaded and saved successfully",
-                    "document", document // Or construct a DTO to match your desired response structure
+                    "document", documentList // Sử dụng danh sách đã chuyển đổi
             );
 
             return ResponseEntity.ok(response);

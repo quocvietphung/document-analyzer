@@ -42,7 +42,7 @@ public class DocumentController {
 
             Map<String, Object> response = Map.of(
                     "message", "Documents uploaded and saved successfully",
-                    "document", documentList // Sử dụng danh sách đã chuyển đổi
+                    "document", documentList
             );
 
             return ResponseEntity.ok(response);

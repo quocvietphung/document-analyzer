@@ -76,7 +76,8 @@ public class UserService {
     private void validateRequiredFields(User user) {
         if (user.getFirstName() == null || user.getLastName() == null || user.getEmail() == null
                 || user.getPhoneNumber() == null || user.getUsername() == null || user.getPassword() == null
-                || user.getRole() == null || user.getPrivacyPolicyAccepted() == null || user.getTermsAndConditionsAccepted() == null) {
+                || user.getRole() == null || user.getPrivacyPolicyAccepted() == null
+                || user.getTermsAndConditionsAccepted() == null || user.getIsCompanyClient() == null) {
             throw new IllegalArgumentException("Missing required fields");
         }
     }

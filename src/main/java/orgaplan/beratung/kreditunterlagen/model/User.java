@@ -42,6 +42,9 @@ public class User {
     @Column(name = "role", nullable = false)
     private String role;
 
+    @Column(name = "is_company_client", nullable = false)
+    private Boolean isCompanyClient;
+
     @Column(name = "privacy_policy_accepted", nullable = false)
     private Boolean privacyPolicyAccepted;
 

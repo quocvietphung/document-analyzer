@@ -28,17 +28,21 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> loginRequest) {
         String username = loginRequest.get("username");
         String password = loginRequest.get("password");
 
         User user = userService.login(username, password);
         if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            Map<String, Object> response = new HashMap<>();
+            response.put("user_id", user.getId());
+            response.put("username", user.getUsername());
+            response.put("message", "Login successful");
+            return ResponseEntity.ok(response);
         } else {
             Map<String, Object> response = new HashMap<>();
-            response.put("message", "Invalid credentials");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+            response.put("message", "Invalid username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
 

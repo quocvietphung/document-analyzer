@@ -100,6 +100,7 @@ public class UserService {
         if (updatedUserFields.getEmail() != null) user.setEmail(updatedUserFields.getEmail());
         if (updatedUserFields.getPhoneNumber() != null) user.setPhoneNumber(updatedUserFields.getPhoneNumber());
         if (updatedUserFields.getCompanyName() != null) user.setCompanyName(updatedUserFields.getCompanyName());
+        if (updatedUserFields.getUsername() != null) user.setUsername(updatedUserFields.getUsername()); // Thêm dòng này
         if (updatedUserFields.getRole() != null) user.setRole(updatedUserFields.getRole());
         if (updatedUserFields.getPrivacyPolicyAccepted() != null) user.setPrivacyPolicyAccepted(updatedUserFields.getPrivacyPolicyAccepted());
         if (updatedUserFields.getTermsAndConditionsAccepted() != null) user.setTermsAndConditionsAccepted(updatedUserFields.getTermsAndConditionsAccepted());

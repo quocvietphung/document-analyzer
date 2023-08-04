@@ -66,7 +66,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/editUser/{id}")
     public ResponseEntity<User> editUser(@PathVariable String id, @RequestBody User updatedUserFields) {
         User updatedUser = userService.editUser(id, updatedUserFields);
         return ResponseEntity.ok(updatedUser);

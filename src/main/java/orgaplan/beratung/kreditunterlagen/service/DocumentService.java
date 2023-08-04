@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID; // Import UUID
 
@@ -32,28 +34,34 @@ public class DocumentService {
     }
 
     @Transactional
-    public Document uploadDocument(MultipartFile file, String userId, String documentType) throws IOException {
+    public Document uploadDocument(MultipartFile[] files, String userId, String documentType) throws IOException {
         String uploadDir = System.getProperty("user.dir") + "/uploads";
         File directory = new File(uploadDir);
         if (!directory.exists()) {
             directory.mkdir();
         }
 
-        String fileName = file.getOriginalFilename();
-        File convertedFile = new File(uploadDir + "/" + fileName);
-        FileOutputStream fos = new FileOutputStream(convertedFile);
-        fos.write(file.getBytes());
-        fos.close();
+        List<String> fileNames = new ArrayList<>();
+        for (MultipartFile file : files) {
+            String fileName = file.getOriginalFilename();
+            File convertedFile = new File(uploadDir + "/" + fileName);
+            try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
+                fos.write(file.getBytes());
+            }
+            fileNames.add(fileName);
+        }
+
+        // Convert fileNames to JSON or comma-separated string
+        String documentFiles = String.join(",", fileNames); // Or use a library to convert to JSON
 
         Document document = new Document();
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
-
             return null;
         }
         document.setUser(user);
         document.setDocumentType(documentType);
-        document.setDocument(fileName);
+        document.setDocument(documentFiles);
         return documentRepository.save(document);
     }
 

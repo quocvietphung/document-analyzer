@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/documents")
@@ -24,19 +25,24 @@ public class DocumentController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadDocument(@RequestParam("userId") String userId,
-                                                 @RequestParam("documentType") String documentType ,
-                                                 @RequestParam("document") MultipartFile file) {
+    public ResponseEntity<Map<String, Object>> uploadDocument(@RequestParam("userId") String userId,
+                                                              @RequestParam("documentType") String documentType,
+                                                              @RequestParam("document") MultipartFile[] files) {
         try {
-            Document document = documentService.uploadDocument(file, userId, documentType);
+            Document document = documentService.uploadDocument(files, userId, documentType);
             if (document == null) {
-                return ResponseEntity.status(500).body("Failed to upload document.");
+                return ResponseEntity.status(500).body(Map.of("message", "Failed to upload document."));
             }
 
-            return ResponseEntity.ok("Document uploaded successfully!");
+            Map<String, Object> response = Map.of(
+                    "message", "Documents uploaded and saved successfully",
+                    "document", document // Or construct a DTO to match your desired response structure
+            );
+
+            return ResponseEntity.ok(response);
         } catch (IOException e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).body("Failed to upload document.");
+            return ResponseEntity.status(500).body(Map.of("message", "Failed to upload document."));
         }
     }
 

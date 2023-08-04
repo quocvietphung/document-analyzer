@@ -1,5 +1,6 @@
 package orgaplan.beratung.kreditunterlagen.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import orgaplan.beratung.kreditunterlagen.model.Document;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.repository.DocumentRepository;
@@ -18,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -40,27 +42,35 @@ public class DocumentService {
             directory.mkdir();
         }
 
-        List<String> fileNames = new ArrayList<>();
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return null;
+        }
+
+        Document document = documentRepository.findByUserIdAndDocumentType(userId, documentType);
+        List<Map<String, String>> existingFileData = new ArrayList<>();
+        if (document != null && document.getDocument() != null) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            existingFileData = objectMapper.readValue(document.getDocument(), List.class);
+        } else {
+            document = new Document();
+            document.setUser(user);
+            document.setDocumentType(documentType);
+        }
+
         for (MultipartFile file : files) {
             String fileName = file.getOriginalFilename();
             File convertedFile = new File(uploadDir + "/" + fileName);
             try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
                 fos.write(file.getBytes());
             }
-            fileNames.add(fileName);
+            existingFileData.add(Map.of("filename", fileName));
         }
 
-        // Convert fileNames to JSON or comma-separated string
-        String documentFiles = String.join(",", fileNames); // Or use a library to convert to JSON
-
-        Document document = new Document();
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            return null;
-        }
-        document.setUser(user);
-        document.setDocumentType(documentType);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String documentFiles = objectMapper.writeValueAsString(existingFileData);
         document.setDocument(documentFiles);
+
         return documentRepository.save(document);
     }
 

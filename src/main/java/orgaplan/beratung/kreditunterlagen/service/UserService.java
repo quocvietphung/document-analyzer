@@ -104,6 +104,6 @@ public class UserService {
         if (updatedUserFields.getPrivacyPolicyAccepted() != null) user.setPrivacyPolicyAccepted(updatedUserFields.getPrivacyPolicyAccepted());
         if (updatedUserFields.getTermsAndConditionsAccepted() != null) user.setTermsAndConditionsAccepted(updatedUserFields.getTermsAndConditionsAccepted());
 
-        user.setUpdatedAt(LocalDateTime.now()); // Set updated at timestamp
+        user.setUpdatedAt(LocalDateTime.now());
     }
 }

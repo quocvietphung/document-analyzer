@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Map;
 import java.util.List;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/documents")
@@ -37,13 +38,12 @@ public class DocumentController {
             }
 
             ObjectMapper objectMapper = new ObjectMapper();
-            // Chuyển chuỗi JSON thành một đối tượng Java có thể hiển thị được
             List<Map<String, String>> documentList = objectMapper.readValue(document.getDocument(), List.class);
 
-            Map<String, Object> response = Map.of(
-                    "message", "Documents uploaded and saved successfully",
-                    "document", documentList
-            );
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Documents uploaded and saved successfully");
+            response.put("document", documentList);
+            response.put("documentType", documentType);
 
             return ResponseEntity.ok(response);
         } catch (IOException e) {

@@ -21,6 +21,12 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/test")
+    public ResponseEntity<String> sayHello() {
+        String message = "Hello, World!";
+        return ResponseEntity.ok(message);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
         String username = loginRequest.get("username");
@@ -34,12 +40,6 @@ public class UserController {
             response.put("message", "Invalid credentials");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
-    }
-
-    @GetMapping("/test")
-    public ResponseEntity<String> sayHello() {
-        String message = "Hello, World!";
-        return ResponseEntity.ok(message);
     }
 
     @PostMapping("/createUser")

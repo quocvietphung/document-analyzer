@@ -34,13 +34,19 @@ public class UserService {
         return passwordEncoder.matches(password, user.getPassword());
     }
 
-    @Transactional
     public User createUser(User user) {
         validateRequiredFields(user);
         user.setId(UUID.randomUUID().toString()); // Generate a unique ID
         user.setCreatedAt(LocalDateTime.now()); // Set created at timestamp
         user.setUpdatedAt(LocalDateTime.now()); // Set updated at timestamp
         hashPassword(user);
+
+        if (user.getIsCompanyClient()) {
+            user.setRole("FIRMEN_KUNDEN");
+        } else {
+            user.setRole("PRIVAT_KUNDEN");
+        }
+
         return userRepository.save(user);
     }
 
@@ -76,8 +82,8 @@ public class UserService {
     private void validateRequiredFields(User user) {
         if (user.getFirstName() == null || user.getLastName() == null || user.getEmail() == null
                 || user.getPhoneNumber() == null || user.getUsername() == null || user.getPassword() == null
-                || user.getRole() == null || user.getPrivacyPolicyAccepted() == null
-                || user.getTermsAndConditionsAccepted() == null || user.getIsCompanyClient() == null) {
+                || user.getPrivacyPolicyAccepted() == null || user.getTermsAndConditionsAccepted() == null
+                || user.getIsCompanyClient() == null) {
             throw new IllegalArgumentException("Missing required fields");
         }
     }

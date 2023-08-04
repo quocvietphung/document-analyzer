@@ -9,6 +9,7 @@ CREATE TABLE users
     username                      VARCHAR(255) NOT NULL,
     password                      VARCHAR(255) NOT NULL,
     role                          VARCHAR(255) NOT NULL,
+    is_company_client             TINYINT(1)   NOT NULL,
     privacy_policy_accepted       TINYINT(1)   NOT NULL,
     terms_and_conditions_accepted TINYINT(1)   NOT NULL,
     created_at                    TIMESTAMP    NOT NULL,

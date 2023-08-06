@@ -10,7 +10,6 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -78,8 +77,8 @@ public class DocumentService {
         return documentRepository.findById(id).orElse(null);
     }
 
-    public InputStreamResource getDocumentResource(Document document) {
-        String filePath = System.getProperty("user.dir") + "/uploads/" + document.getDocument();
+    public InputStreamResource getDocumentResource(Document document, String filename) {
+        String filePath = System.getProperty("user.dir") + "/uploads/" + filename;
         Path path = Paths.get(filePath);
 
         try {

@@ -52,20 +52,20 @@ public class DocumentController {
         }
     }
 
-    @GetMapping("/{documentId}")
-    public ResponseEntity<InputStreamResource> downloadDocument(@PathVariable Long documentId) {
+    @GetMapping("/{documentId}/{filename}")
+    public ResponseEntity<InputStreamResource> downloadDocument(@PathVariable Long documentId, @PathVariable String filename) {
         Document document = documentService.getDocumentById(documentId);
         if (document == null) {
             return ResponseEntity.notFound().build();
         }
 
-        InputStreamResource resource = documentService.getDocumentResource(document);
+        InputStreamResource resource = documentService.getDocumentResource(document, filename);
         if (resource == null) {
             return ResponseEntity.status(500).body(null);
         }
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + document.getDocument());
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE);
 
         return ResponseEntity.ok()

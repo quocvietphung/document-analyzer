@@ -1,9 +1,9 @@
 package orgaplan.beratung.kreditunterlagen.service;
 
-import orgaplan.beratung.kreditunterlagen.model.Document;
-import orgaplan.beratung.kreditunterlagen.repository.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import orgaplan.beratung.kreditunterlagen.model.Document;
+import orgaplan.beratung.kreditunterlagen.repository.DocumentRepository;
 
 import java.util.List;
 

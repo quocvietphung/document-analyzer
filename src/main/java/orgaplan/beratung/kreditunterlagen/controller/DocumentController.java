@@ -19,15 +19,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/documents")
+@RequestMapping("/documents")
 public class DocumentController {
 
     private final DocumentService documentService;
@@ -44,12 +43,22 @@ public class DocumentController {
     public ResponseEntity<Map<String, Object>> saveDocument(@RequestParam("file") MultipartFile file,
                                                             @RequestParam("userId") String userId,
                                                             @RequestParam("docType") String docType) throws IOException {
-        String fileName = file.getOriginalFilename();
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/documents/downloadFile/")
-                .path(fileName).toUriString();
+        String originalFileName = file.getOriginalFilename();
+        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        String uniqueFileName = UUID.randomUUID().toString() + extension;
 
-        File dest = new File(uploadDir + fileName);
-        file.transferTo(dest); // Lưu file vào thư mục uploads
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/documents/downloadFile/")
+                .path(uniqueFileName).toUriString();
+
+        File uploadDirFile = new File(uploadDir);
+        if (!uploadDirFile.exists()) {
+            if (!uploadDirFile.mkdirs()) {
+                throw new IOException("Failed to create upload directory.");
+            }
+        }
+
+        File dest = new File(uploadDir + uniqueFileName);
+        file.transferTo(dest);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
@@ -57,14 +66,14 @@ public class DocumentController {
         Document doc = new Document();
         doc.setUser(user);
         doc.setDocumentType(docType);
-        doc.setFileName(fileName);
+        doc.setFileName(uniqueFileName); // Lưu tên tệp duy nhất
         doc.setFilePath(fileDownloadUri);
 
         documentService.save(doc);
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Document saved successfully");
-        response.put("fileName", fileName);
+        response.put("fileName", uniqueFileName); // Trả về tên tệp duy nhất
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

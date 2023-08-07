@@ -50,7 +50,7 @@ public class DocumentService {
 
     public Resource loadFileAsResource(FileDownloadRequest fileRequest) {
         try {
-            Path filePath = Paths.get(UPLOADED_FOLDER + fileRequest.getUserId() + "/" + fileRequest.getFileName()).normalize();
+            Path filePath = Paths.get(UPLOADED_FOLDER, fileRequest.getUserId(), fileRequest.getFileName()).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if(resource.exists()) {
                 return resource;

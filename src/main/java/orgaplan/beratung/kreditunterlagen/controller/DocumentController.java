@@ -6,39 +6,45 @@ import orgaplan.beratung.kreditunterlagen.service.DocumentService;
 import orgaplan.beratung.kreditunterlagen.service.FileStorageService;
 import orgaplan.beratung.kreditunterlagen.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/documents")
 public class DocumentController {
-    @Autowired
-    private DocumentService documentService;
+
+    private final DocumentService documentService;
+    private final UserRepository userRepository;
+    private final FileStorageService fileStorageService;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private FileStorageService fileStorageService;
+    public DocumentController(DocumentService documentService, UserRepository userRepository, FileStorageService fileStorageService) {
+        this.documentService = documentService;
+        this.userRepository = userRepository;
+        this.fileStorageService = fileStorageService;
+    }
 
     @PostMapping("/uploadFile")
-    public Document saveDocument(@RequestParam("file") MultipartFile file, @RequestParam("userId") String userId,
+    public Document saveDocument(@RequestParam("file") MultipartFile file,
+                                 @RequestParam("userId") String userId,
                                  @RequestParam("docType") String docType) throws IOException {
         String fileName = fileStorageService.storeFile(file);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
 
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/documents/downloadFile/")
                 .path(fileName).toUriString();
 
         Document doc = new Document();
@@ -50,8 +56,7 @@ public class DocumentController {
         return documentService.save(doc);
     }
 
-
-    @GetMapping("/user/{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<List<Document>> getDocumentsByUserId(@PathVariable String userId) {
         List<Document> docs = documentService.findByUserId(userId);
         return ResponseEntity.ok().body(docs);
@@ -59,10 +64,8 @@ public class DocumentController {
 
     @GetMapping("/downloadFile/{fileName}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
-        // Load file as Resource
         Resource resource = fileStorageService.loadFileAsResource(fileName);
 
-        // Try to determine file's content type
         String contentType = null;
         try {
             contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
@@ -70,8 +73,7 @@ public class DocumentController {
             System.out.println("Could not determine file type.");
         }
 
-        // Fallback to the default content type if type could not be determined
-        if(contentType == null) {
+        if (contentType == null) {
             contentType = "application/octet-stream";
         }
 

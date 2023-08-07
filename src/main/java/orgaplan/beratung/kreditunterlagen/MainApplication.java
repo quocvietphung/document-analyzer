@@ -28,19 +28,21 @@ public class MainApplication {
 		return args -> {
 			String serverUrl = "http://localhost:8080";
 
-			printEndpointsForController("UserController", serverUrl);
-			printEndpointsForController("DocumentController", serverUrl);
+			printEndpointsForController("DocumentController", serverUrl, "/api/documents");
+			printEndpointsForController("UserController", serverUrl, "/api/users");
 		};
 	}
 
-	private void printEndpointsForController(String controllerName, String serverUrl) {
+	private void printEndpointsForController(String controllerName, String serverUrl, String basePath) {
 		System.out.println(controllerName + " Endpoints:");
 		Map<RequestMappingInfo, HandlerMethod> controllerMethods = requestMappingHandlerMapping.getHandlerMethods();
 		for (RequestMappingInfo info : controllerMethods.keySet()) {
 			Set<String> patterns = info.getPatternsCondition().getPatterns();
-			patterns.forEach(pattern -> {
-				System.out.println(serverUrl + pattern);
-			});
+			for (String pattern : patterns) {
+				if (pattern.startsWith(basePath)) {
+					System.out.println(serverUrl + pattern);
+				}
+			}
 			System.out.println(info.getMethodsCondition().getMethods());
 		}
 	}

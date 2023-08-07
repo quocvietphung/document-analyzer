@@ -25,7 +25,9 @@ public class DocumentController {
     private UserService userService;
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadDocument(@RequestParam("file") MultipartFile file, @RequestParam("type") String documentType, @RequestParam("userId") String userId) {
+    public ResponseEntity<?> uploadDocument(@RequestParam("file") MultipartFile file,
+                                            @RequestParam("type") String documentType,
+                                            @RequestParam("userId") String userId) {
         User user = userService.getUserById(userId.toString());
         if (user == null) {
             logger.error("User not found with ID: {}", userId);

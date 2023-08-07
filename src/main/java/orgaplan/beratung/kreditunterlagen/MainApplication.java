@@ -25,19 +25,15 @@ public class MainApplication {
 
 	@Bean
 	public ApplicationRunner applicationRunner() {
-		return new ApplicationRunner() {
-
-			@Override
-			public void run(ApplicationArguments args) {
-				String serverUrl = "http://localhost:8080";
-				Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
-				for (RequestMappingInfo info : handlerMethods.keySet()) {
-					Set<String> patternSet = info.getPatternsCondition().getPatterns();
-					patternSet.forEach(pattern -> {
-						System.out.println(serverUrl + pattern);
-					});
-					System.out.println(info.getMethodsCondition().getMethods());
-				}
+		return args -> {
+			String serverUrl = "http://localhost:8080";
+			Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
+			for (RequestMappingInfo info : handlerMethods.keySet()) {
+				Set<String> patterns = info.getPatternsCondition().getPatterns();
+				patterns.forEach(pattern -> {
+					System.out.println(serverUrl + pattern);
+				});
+				System.out.println(info.getMethodsCondition().getMethods());
 			}
 		};
 	}

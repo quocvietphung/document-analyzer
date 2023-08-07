@@ -2,9 +2,10 @@ package orgaplan.beratung.kreditunterlagen.model;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.validation.constraints.NotNull; // Import the @NotNull annotation
+import javax.validation.constraints.NotNull;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -67,4 +68,7 @@ public class User {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Document> documents;
 }

@@ -1,75 +1,83 @@
 package orgaplan.beratung.kreditunterlagen.controller;
 
 import orgaplan.beratung.kreditunterlagen.model.Document;
+import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.service.DocumentService;
+import orgaplan.beratung.kreditunterlagen.service.FileStorageService;
+import orgaplan.beratung.kreditunterlagen.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.List;
-import java.util.HashMap;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/documents")
+@RequestMapping("/api/documents")
 public class DocumentController {
-
-    private final DocumentService documentService;
+    @Autowired
+    private DocumentService documentService;
 
     @Autowired
-    public DocumentController(DocumentService documentService) {
-        this.documentService = documentService;
+    private UserRepository userRepository;
+
+    @Autowired
+    private FileStorageService fileStorageService;
+
+    @PostMapping("/uploadFile")
+    public Document saveDocument(@RequestParam("file") MultipartFile file, @RequestParam("userId") String userId,
+                                 @RequestParam("docType") String docType) throws IOException {
+        String fileName = fileStorageService.storeFile(file);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
+                .path(fileName).toUriString();
+
+        Document doc = new Document();
+        doc.setUser(user);
+        doc.setDocumentType(docType);
+        doc.setFileName(fileName);
+        doc.setFilePath(fileDownloadUri);
+
+        return documentService.save(doc);
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<Map<String, Object>> uploadDocument(@RequestParam("userId") String userId,
-                                                              @RequestParam("documentType") String documentType,
-                                                              @RequestParam("document") MultipartFile[] files) {
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Document>> getDocumentsByUserId(@PathVariable String userId) {
+        List<Document> docs = documentService.findByUserId(userId);
+        return ResponseEntity.ok().body(docs);
+    }
+
+    @GetMapping("/downloadFile/{fileName}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
+        // Load file as Resource
+        Resource resource = fileStorageService.loadFileAsResource(fileName);
+
+        // Try to determine file's content type
+        String contentType = null;
         try {
-            Document document = documentService.uploadDocument(files, userId, documentType);
-            if (document == null) {
-                return ResponseEntity.status(500).body(Map.of("message", "Failed to upload document."));
-            }
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            List<Map<String, String>> documentList = objectMapper.readValue(document.getDocument(), List.class);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "Documents uploaded and saved successfully");
-            response.put("document", documentList);
-            response.put("documentType", documentType);
-
-            return ResponseEntity.ok(response);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(Map.of("message", "Failed to upload document."));
-        }
-    }
-
-    @GetMapping("/{documentId}/{filename}")
-    public ResponseEntity<InputStreamResource> downloadDocument(@PathVariable Long documentId, @PathVariable String filename) {
-        Document document = documentService.getDocumentById(documentId);
-        if (document == null) {
-            return ResponseEntity.notFound().build();
+            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException ex) {
+            System.out.println("Could not determine file type.");
         }
 
-        InputStreamResource resource = documentService.getDocumentResource(document, filename);
-        if (resource == null) {
-            return ResponseEntity.status(500).body(null);
+        // Fallback to the default content type if type could not be determined
+        if(contentType == null) {
+            contentType = "application/octet-stream";
         }
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE);
 
         return ResponseEntity.ok()
-                .headers(headers)
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
 }

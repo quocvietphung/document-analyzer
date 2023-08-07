@@ -1,14 +1,17 @@
 package orgaplan.beratung.kreditunterlagen.model;
 
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
 import javax.persistence.*;
 
 @Entity
 @Table(name = "documents")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Document {
 
     @Id
@@ -22,7 +25,9 @@ public class Document {
     @Column(name = "document_type")
     private String documentType;
 
-    @Column(name = "document")
-    @Type(type = "text")
-    private String document;
+    @Column(name = "file_name")
+    private String fileName;
+
+    @Column(name = "file_path")
+    private String filePath;
 }

@@ -28,8 +28,8 @@ public class MainApplication {
 		return args -> {
 			String serverUrl = "http://localhost:8080";
 
-			printEndpointsForController("DocumentController", serverUrl, "/documents");
-			printEndpointsForController("UserController", serverUrl, "/users");
+			printEndpointsForController("DocumentController", serverUrl, "/api/documents");
+			printEndpointsForController("UserController", serverUrl, "/api/users");
 		};
 	}
 

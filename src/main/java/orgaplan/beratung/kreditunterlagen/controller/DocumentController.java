@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/documents")
+@RequestMapping("/api/documents")
 public class DocumentController {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentController.class);
@@ -25,7 +25,7 @@ public class DocumentController {
     private UserService userService;
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadDocument(@RequestParam("file") MultipartFile file, @RequestParam("type") String documentType, @RequestParam("userId") Long userId) {
+    public ResponseEntity<?> uploadDocument(@RequestParam("file") MultipartFile file, @RequestParam("type") String documentType, @RequestParam("userId") String userId) {
         User user = userService.getUserById(userId.toString());
         if (user == null) {
             logger.error("User not found with ID: {}", userId);

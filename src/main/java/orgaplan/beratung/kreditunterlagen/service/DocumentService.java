@@ -11,12 +11,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.UUID;
 
 @Service
 public class DocumentService {
 
-    private static String UPLOADED_FOLDER = "uploads";
+    private static String UPLOADED_FOLDER = "uploads/";
 
     @Autowired
     private DocumentRepository documentRepository;
@@ -27,8 +26,12 @@ public class DocumentService {
         document.setUser(user);
 
         // Save the file locally
-        Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
+        String userFolder = UPLOADED_FOLDER + user.getId() + "/";
+        Path path = Paths.get(userFolder + file.getOriginalFilename());
         try {
+            // Create directory if not exist
+            Files.createDirectories(path.getParent());
+            // Write the file
             Files.write(path, file.getBytes());
         } catch (IOException e) {
             e.printStackTrace();

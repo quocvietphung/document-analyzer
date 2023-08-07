@@ -1,7 +1,7 @@
 package orgaplan.beratung.kreditunterlagen.model;
 
 import org.hibernate.annotations.GenericGenerator;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.validation.constraints.NotNull;
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -70,5 +70,6 @@ public class User {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Document> documents;
 }

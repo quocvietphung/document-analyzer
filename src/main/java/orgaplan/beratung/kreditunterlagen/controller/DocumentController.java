@@ -3,11 +3,12 @@ package orgaplan.beratung.kreditunterlagen.controller;
 import orgaplan.beratung.kreditunterlagen.model.Document;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.service.DocumentService;
-import orgaplan.beratung.kreditunterlagen.service.FileStorageService;
 import orgaplan.beratung.kreditunterlagen.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,26 +32,27 @@ public class DocumentController {
 
     private final DocumentService documentService;
     private final UserRepository userRepository;
-    private final FileStorageService fileStorageService;
+    private final String uploadDir = "uploads/"; // Đường dẫn thư mục uploads
 
     @Autowired
-    public DocumentController(DocumentService documentService, UserRepository userRepository, FileStorageService fileStorageService) {
+    public DocumentController(DocumentService documentService, UserRepository userRepository) {
         this.documentService = documentService;
         this.userRepository = userRepository;
-        this.fileStorageService = fileStorageService;
     }
 
     @PostMapping("/uploadFile")
-    public Document saveDocument(@RequestParam("file") MultipartFile file,
-                                 @RequestParam("userId") String userId,
-                                 @RequestParam("docType") String docType) throws IOException {
-        String fileName = fileStorageService.storeFile(file);
+    public ResponseEntity<Map<String, Object>> saveDocument(@RequestParam("file") MultipartFile file,
+                                                            @RequestParam("userId") String userId,
+                                                            @RequestParam("docType") String docType) throws IOException {
+        String fileName = file.getOriginalFilename();
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/documents/downloadFile/")
+                .path(fileName).toUriString();
+
+        File dest = new File(uploadDir + fileName);
+        file.transferTo(dest); // Lưu file vào thư mục uploads
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
-
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/documents/downloadFile/")
-                .path(fileName).toUriString();
 
         Document doc = new Document();
         doc.setUser(user);
@@ -53,7 +60,12 @@ public class DocumentController {
         doc.setFileName(fileName);
         doc.setFilePath(fileDownloadUri);
 
-        return documentService.save(doc);
+        documentService.save(doc);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Document saved successfully");
+        response.put("fileName", fileName);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/{userId}")
@@ -64,7 +76,18 @@ public class DocumentController {
 
     @GetMapping("/downloadFile/{fileName}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
-        Resource resource = fileStorageService.loadFileAsResource(fileName);
+        File file = new File(uploadDir + fileName);
+        if (!file.exists()) {
+            throw new RuntimeException("File not found: " + fileName);
+        }
+
+        Resource resource;
+        try {
+            Path filePath = file.toPath();
+            resource = new UrlResource(filePath.toUri());
+        } catch (MalformedURLException ex) {
+            throw new RuntimeException("File not found: " + fileName, ex);
+        }
 
         String contentType = null;
         try {

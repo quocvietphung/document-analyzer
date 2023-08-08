@@ -6,6 +6,7 @@ import orgaplan.beratung.kreditunterlagen.model.Document;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.request.FileDownloadRequest;
 import orgaplan.beratung.kreditunterlagen.response.ApiResponse;
+import orgaplan.beratung.kreditunterlagen.response.DocumentResponse;
 import orgaplan.beratung.kreditunterlagen.service.DocumentService;
 import orgaplan.beratung.kreditunterlagen.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,11 +88,8 @@ public class DocumentController {
     }
 
     @GetMapping("/{userId}")
-    public Map<String, Object> getUserDocuments(@PathVariable String userId) {
+    public DocumentResponse getUserDocuments(@PathVariable String userId) {
         List<Document> documents = documentService.getDocumentsByUserId(userId);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("userid", userId);
 
         User user = userService.getUserById(userId);  // Using UserService to get user details
         if (user == null) {
@@ -114,8 +112,6 @@ public class DocumentController {
             }
         }
 
-        response.put("documents", docMap);
-
-        return response;
+        return new DocumentResponse(userId, docMap);
     }
 }

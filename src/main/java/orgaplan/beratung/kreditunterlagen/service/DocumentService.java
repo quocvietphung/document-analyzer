@@ -1,5 +1,7 @@
 package orgaplan.beratung.kreditunterlagen.service;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import orgaplan.beratung.kreditunterlagen.model.Document;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.repository.DocumentRepository;
@@ -9,6 +11,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import orgaplan.beratung.kreditunterlagen.response.DocumentResponse;
 import orgaplan.beratung.kreditunterlagen.util.Types;
 
 import java.io.IOException;
@@ -16,7 +19,10 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DocumentService {
@@ -25,6 +31,9 @@ public class DocumentService {
 
     @Autowired
     private DocumentRepository documentRepository;
+
+    @Autowired
+    private UserService userService;
 
     public Document save(MultipartFile file, String documentType, User user) {
         Document document = new Document();
@@ -74,5 +83,32 @@ public class DocumentService {
 
     public List<Document> getDocumentsByUserId(String userId) {
         return documentRepository.findByUserId(userId);
+    }
+
+    public DocumentResponse getUserDocumentsByUserId(String userId) {
+        List<Document> documents = getDocumentsByUserId(userId);
+
+        User user = userService.getUserById(userId);  // Assuming you inject the userService to this service
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+
+        List<String> requiredDocuments = user.getRole().equals("PRIVAT_KUNDEN")
+                ? Types.PRIVAT_KUNDEN_DOCUMENTS
+                : Types.FIRMEN_KUNDEN_DOCUMENTS;
+
+        Map<String, List<Document>> docMap = new HashMap<>();
+        for (String docType : requiredDocuments) {
+            docMap.put(docType, new ArrayList<>());
+        }
+
+        for (Document document : documents) {
+            String docTypeName = document.getDocumentType().name();
+            if (docMap.containsKey(docTypeName)) {
+                docMap.get(docTypeName).add(document);
+            }
+        }
+
+        return new DocumentResponse(userId, docMap);
     }
 }

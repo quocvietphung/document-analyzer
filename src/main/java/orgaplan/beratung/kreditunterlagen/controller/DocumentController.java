@@ -89,29 +89,6 @@ public class DocumentController {
 
     @GetMapping("/{userId}")
     public DocumentResponse getUserDocuments(@PathVariable String userId) {
-        List<Document> documents = documentService.getDocumentsByUserId(userId);
-
-        User user = userService.getUserById(userId);  // Using UserService to get user details
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-        }
-
-        List<String> requiredDocuments = user.getRole().equals("PRIVAT_KUNDEN")
-                ? Types.PRIVAT_KUNDEN_DOCUMENTS
-                : Types.FIRMEN_KUNDEN_DOCUMENTS;
-
-        Map<String, List<Document>> docMap = new HashMap<>();
-        for (String docType : requiredDocuments) {
-            docMap.put(docType, new ArrayList<>());
-        }
-
-        for (Document document : documents) {
-            String docTypeName = document.getDocumentType().name();
-            if (docMap.containsKey(docTypeName)) {
-                docMap.get(docTypeName).add(document);
-            }
-        }
-
-        return new DocumentResponse(userId, docMap);
+        return documentService.getUserDocumentsByUserId(userId);
     }
 }

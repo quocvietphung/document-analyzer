@@ -1,7 +1,6 @@
 package orgaplan.beratung.kreditunterlagen.service;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
+import orgaplan.beratung.kreditunterlagen.exception.UserExceptions;
 import orgaplan.beratung.kreditunterlagen.model.Document;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.repository.DocumentRepository;
@@ -88,9 +87,9 @@ public class DocumentService {
     public DocumentResponse getUserDocumentsByUserId(String userId) {
         List<Document> documents = getDocumentsByUserId(userId);
 
-        User user = userService.getUserById(userId);  // Assuming you inject the userService to this service
+        User user = userService.getUserById(userId);
         if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+            throw new UserExceptions.UserNotFoundException("User not found with ID: " + userId);
         }
 
         List<String> requiredDocuments = user.getRole().equals("PRIVAT_KUNDEN")

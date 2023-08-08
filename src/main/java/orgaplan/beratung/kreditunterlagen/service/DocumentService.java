@@ -47,7 +47,8 @@ public class DocumentService {
 
         document.setUser(user);
 
-        String userFolder = UPLOADED_FOLDER + user.getId() + "/" + documentType + "/";
+        String docTypeFolder = toTitleCase(documentType) + "/";
+        String userFolder = UPLOADED_FOLDER + user.getId() + "/" + docTypeFolder;
         Path path = Paths.get(userFolder + file.getOriginalFilename());
 
         try {
@@ -66,7 +67,8 @@ public class DocumentService {
 
     public Resource loadFileAsResource(FileDownloadRequest fileRequest) {
         try {
-            Path filePath = Paths.get(UPLOADED_FOLDER, fileRequest.getUserId(), fileRequest.getDocumentType(), fileRequest.getFileName()).normalize();
+            String normalizedDocumentType = toTitleCase(fileRequest.getDocumentType());
+            Path filePath = Paths.get(UPLOADED_FOLDER, fileRequest.getUserId(), normalizedDocumentType, fileRequest.getFileName()).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if(resource.exists()) {
                 return resource;

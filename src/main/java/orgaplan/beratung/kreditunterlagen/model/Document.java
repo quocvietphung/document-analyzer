@@ -1,11 +1,12 @@
 package orgaplan.beratung.kreditunterlagen.model;
 
+import orgaplan.beratung.kreditunterlagen.util.Types;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import javax.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import javax.persistence.*;
 
 @Entity
 @Table(name = "documents")
@@ -24,8 +25,9 @@ public class Document {
     @JsonBackReference
     private User user;
 
-    @Column(name = "document_type")
-    private String documentType;
+    @Column(name = "document_type", nullable = false, length = 50)
+    @Enumerated(EnumType.STRING)
+    private Types.DocumentType documentType;
 
     @Column(name = "file_name")
     private String fileName;

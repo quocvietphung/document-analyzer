@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import orgaplan.beratung.kreditunterlagen.util.Types;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -26,7 +27,15 @@ public class DocumentService {
 
     public Document save(MultipartFile file, String documentType, User user) {
         Document document = new Document();
-        document.setDocumentType(documentType);
+
+        try {
+            Types.DocumentType docType = Types.DocumentType.valueOf(documentType);
+            document.setDocumentType(docType);
+        } catch (IllegalArgumentException e) {
+            // Handle the case where the document type string is not valid
+            throw new IllegalArgumentException("Invalid document type: " + documentType);
+        }
+
         document.setUser(user);
 
         // Save the file locally

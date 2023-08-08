@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import orgaplan.beratung.kreditunterlagen.util.Types;
+import orgaplan.beratung.kreditunterlagen.validation.DocumentValidation;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -39,6 +40,9 @@ public class DocumentController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private DocumentValidation documentValidation;
+
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse> uploadDocument(@RequestParam("file") MultipartFile file,
                                                       @RequestParam("type") String documentType,
@@ -50,8 +54,12 @@ public class DocumentController {
         }
 
         try {
+            documentValidation.validateDocumentTypeForUserRole(documentType, user);
             Document document = documentService.save(file, documentType, user);
             return new ResponseEntity<>(new ApiResponse(true, "Document uploaded successfully", document), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage(), e);
+            return new ResponseEntity<>(new ApiResponse(false, e.getMessage(), null), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             logger.error("Error occurred while saving document", e);
             return new ResponseEntity<>(new ApiResponse(false, e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);

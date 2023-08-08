@@ -68,6 +68,7 @@ public class UserService {
 
         updateFields(user, updatedUserFields);
         if (updatedUserFields.getPassword() != null) {
+            user.setPassword(updatedUserFields.getPassword());
             hashPassword(user);
         }
         return userRepository.save(user);

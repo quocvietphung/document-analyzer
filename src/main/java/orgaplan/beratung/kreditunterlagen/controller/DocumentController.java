@@ -52,26 +52,31 @@ public class DocumentController {
     }
 
     @PostMapping("/download")
-    public ResponseEntity<Resource> downloadFile(@RequestBody FileDownloadRequest fileRequest, HttpServletRequest request) {
-        // Load file as Resource
-        Resource resource = documentService.loadFileAsResource(fileRequest);
-
-        // Try to determine file's content type
-        String contentType = null;
+    public ResponseEntity<?> downloadFile(@RequestBody FileDownloadRequest fileRequest, HttpServletRequest request) {
         try {
-            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-        } catch (IOException ex) {
-            logger.info("Could not determine file type.");
-        }
+            // Load file as Resource
+            Resource resource = documentService.loadFileAsResource(fileRequest);
 
-        // Fallback to the default content type if type could not be determined
-        if(contentType == null) {
-            contentType = "application/octet-stream";
-        }
+            // Try to determine file's content type
+            String contentType = null;
+            try {
+                contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+            } catch (IOException ex) {
+                logger.info("Could not determine file type.");
+            }
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+            // Fallback to the default content type if type could not be determined
+            if(contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (Exception e) {
+            logger.error("Error occurred while retrieving the document", e);
+            return new ResponseEntity<>(new ApiResponse(false, e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

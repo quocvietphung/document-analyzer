@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import orgaplan.beratung.kreditunterlagen.exception.UserExceptions;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -58,13 +58,13 @@ public class UserService {
     @Transactional(readOnly = true)
     public User getUserById(String id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + id));
+                .orElseThrow(() -> new UserExceptions.UserNotFoundException("User not found with ID: " + id));
     }
 
     @Transactional
     public User editUser(String id, User updatedUserFields) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + id));
+                .orElseThrow(() -> new UserExceptions.UserNotFoundException("User not found with ID: " + id));
 
         updateFields(user, updatedUserFields);
         if (updatedUserFields.getPassword() != null) {

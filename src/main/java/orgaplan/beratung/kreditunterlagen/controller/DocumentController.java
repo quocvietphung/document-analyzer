@@ -5,10 +5,10 @@ import org.slf4j.LoggerFactory;
 import orgaplan.beratung.kreditunterlagen.model.Document;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.request.FileDownloadRequest;
-import orgaplan.beratung.kreditunterlagen.response.ApiResponse;
 import orgaplan.beratung.kreditunterlagen.response.DocumentResponse;
 import orgaplan.beratung.kreditunterlagen.service.DocumentService;
 import orgaplan.beratung.kreditunterlagen.service.UserService;
+import orgaplan.beratung.kreditunterlagen.validation.DocumentValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -17,10 +17,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import orgaplan.beratung.kreditunterlagen.validation.DocumentValidation;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/documents")
@@ -38,25 +39,30 @@ public class DocumentController {
     private DocumentValidation documentValidation;
 
     @PostMapping("/upload")
-    public ResponseEntity<ApiResponse> uploadDocument(@RequestParam("file") MultipartFile file,
-                                                      @RequestParam("type") String documentType,
-                                                      @RequestParam("userId") String userId) {
+    public ResponseEntity<Object> uploadDocument(@RequestParam("file") MultipartFile file,
+                                                 @RequestParam("type") String documentType,
+                                                 @RequestParam("userId") String userId) {
         User user = userService.getUserById(userId.toString());
         if (user == null) {
             logger.error("User not found with ID: {}", userId);
-            return new ResponseEntity<>(new ApiResponse(false, "User not found", null), HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
         try {
             documentValidation.validateDocumentTypeForUserRole(documentType, user);
             Document document = documentService.save(file, documentType, user);
-            return new ResponseEntity<>(new ApiResponse(true, "Document uploaded successfully", document), HttpStatus.OK);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Document uploaded successfully");
+            response.put("document", document);
+
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             logger.error(e.getMessage(), e);
-            return new ResponseEntity<>(new ApiResponse(false, e.getMessage(), null), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             logger.error("Error occurred while saving document", e);
-            return new ResponseEntity<>(new ApiResponse(false, e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -75,7 +81,7 @@ public class DocumentController {
             }
 
             // Fallback to the default content type if type could not be determined
-            if(contentType == null) {
+            if (contentType == null) {
                 contentType = "application/octet-stream";
             }
 
@@ -85,7 +91,7 @@ public class DocumentController {
                     .body(resource);
         } catch (Exception e) {
             logger.error("Error occurred while retrieving the document", e);
-            return new ResponseEntity<>(new ApiResponse(false, e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

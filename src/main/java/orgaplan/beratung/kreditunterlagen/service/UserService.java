@@ -36,9 +36,9 @@ public class UserService {
 
     public User createUser(User user) {
         validateRequiredFields(user);
-        user.setId(UUID.randomUUID().toString()); // Generate a unique ID
-        user.setCreatedAt(LocalDateTime.now()); // Set created at timestamp
-        user.setUpdatedAt(LocalDateTime.now()); // Set updated at timestamp
+        user.setId(UUID.randomUUID().toString());
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
         hashPassword(user);
 
         if (user.getIsCompanyClient()) {

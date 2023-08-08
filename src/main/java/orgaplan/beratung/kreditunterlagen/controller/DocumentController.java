@@ -16,9 +16,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+import orgaplan.beratung.kreditunterlagen.util.Types;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/documents")
@@ -78,5 +84,38 @@ public class DocumentController {
             logger.error("Error occurred while retrieving the document", e);
             return new ResponseEntity<>(new ApiResponse(false, e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/{userId}")
+    public Map<String, Object> getUserDocuments(@PathVariable String userId) {
+        List<Document> documents = documentService.getDocumentsByUserId(userId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("userid", userId);
+
+        User user = userService.getUserById(userId);  // Using UserService to get user details
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+
+        List<String> requiredDocuments = user.getRole().equals("PRIVAT_KUNDEN")
+                ? Types.PRIVAT_KUNDEN_DOCUMENTS
+                : Types.FIRMEN_KUNDEN_DOCUMENTS;
+
+        Map<String, List<Document>> docMap = new HashMap<>();
+        for (String docType : requiredDocuments) {
+            docMap.put(docType, new ArrayList<>());
+        }
+
+        for (Document document : documents) {
+            String docTypeName = document.getDocumentType().name();
+            if (docMap.containsKey(docTypeName)) {
+                docMap.get(docTypeName).add(document);
+            }
+        }
+
+        response.put("documents", docMap);
+
+        return response;
     }
 }

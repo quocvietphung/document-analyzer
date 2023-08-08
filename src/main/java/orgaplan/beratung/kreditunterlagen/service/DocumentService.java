@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Service
 public class DocumentService {
@@ -69,5 +70,9 @@ public class DocumentService {
         } catch (MalformedURLException ex) {
             throw new RuntimeException("File not found " + fileRequest.getFileName(), ex);
         }
+    }
+
+    public List<Document> getDocumentsByUserId(String userId) {
+        return documentRepository.findByUserId(userId);
     }
 }

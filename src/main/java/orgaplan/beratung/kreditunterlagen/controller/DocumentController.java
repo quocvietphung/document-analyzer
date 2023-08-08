@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import orgaplan.beratung.kreditunterlagen.model.Document;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.request.FileDownloadRequest;
+import orgaplan.beratung.kreditunterlagen.response.ApiResponse;
 import orgaplan.beratung.kreditunterlagen.service.DocumentService;
 import orgaplan.beratung.kreditunterlagen.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,24 +33,22 @@ public class DocumentController {
     private UserService userService;
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadDocument(@RequestParam("file") MultipartFile file,
-                                            @RequestParam("type") String documentType,
-                                            @RequestParam("userId") String userId) {
+    public ResponseEntity<ApiResponse> uploadDocument(@RequestParam("file") MultipartFile file,
+                                                      @RequestParam("type") String documentType,
+                                                      @RequestParam("userId") String userId) {
         User user = userService.getUserById(userId.toString());
         if (user == null) {
             logger.error("User not found with ID: {}", userId);
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ApiResponse(false, "User not found", null), HttpStatus.NOT_FOUND);
         }
 
-        Document document = null;
         try {
-            document = documentService.save(file, documentType, user);
+            Document document = documentService.save(file, documentType, user);
+            return new ResponseEntity<>(new ApiResponse(true, "Document uploaded successfully", document), HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Error occurred while saving document", e);
-            return new ResponseEntity<>("Error occurred while saving document", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(false, e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return new ResponseEntity<>(document, HttpStatus.OK);
     }
 
     @PostMapping("/download")

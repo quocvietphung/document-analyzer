@@ -1,6 +1,4 @@
-// File: orgaplan.beratung.kreditunterlagen.util.Types.java
-
-package orgaplan.beratung.kreditunterlagen.util;
+package orgaplan.beratung.kreditunterlagen;
 
 import java.util.Arrays;
 import java.util.List;

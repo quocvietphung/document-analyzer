@@ -1,6 +1,6 @@
 package orgaplan.beratung.kreditunterlagen.model;
 
-import orgaplan.beratung.kreditunterlagen.util.Types;
+import orgaplan.beratung.kreditunterlagen.Types;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
 import lombok.NoArgsConstructor;

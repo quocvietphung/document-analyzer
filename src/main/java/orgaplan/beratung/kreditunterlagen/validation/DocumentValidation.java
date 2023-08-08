@@ -1,7 +1,7 @@
 package orgaplan.beratung.kreditunterlagen.validation;
 
 import orgaplan.beratung.kreditunterlagen.model.User;
-import orgaplan.beratung.kreditunterlagen.util.Types;
+import orgaplan.beratung.kreditunterlagen.Types;
 
 import org.springframework.stereotype.Service;
 import java.util.List;

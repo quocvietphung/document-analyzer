@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FileDownloadRequest {
     private String userId;
+    private String documentType;
     private String fileName;
 }

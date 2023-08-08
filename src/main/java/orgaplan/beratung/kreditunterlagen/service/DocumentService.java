@@ -11,7 +11,8 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import orgaplan.beratung.kreditunterlagen.response.DocumentResponse;
-import orgaplan.beratung.kreditunterlagen.util.Types;
+import orgaplan.beratung.kreditunterlagen.Types;
+import static orgaplan.beratung.kreditunterlagen.util.StringUtil.toTitleCase;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -41,19 +42,16 @@ public class DocumentService {
             Types.DocumentType docType = Types.DocumentType.valueOf(documentType);
             document.setDocumentType(docType);
         } catch (IllegalArgumentException e) {
-            // Handle the case where the document type string is not valid
             throw new IllegalArgumentException("Invalid document type: " + documentType);
         }
 
         document.setUser(user);
 
-        // Save the file locally
-        String userFolder = UPLOADED_FOLDER + user.getId() + "/";
+        String userFolder = UPLOADED_FOLDER + user.getId() + "/" + documentType + "/";
         Path path = Paths.get(userFolder + file.getOriginalFilename());
+
         try {
-            // Create directory if not exist
             Files.createDirectories(path.getParent());
-            // Write the file
             Files.write(path, file.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,7 +66,7 @@ public class DocumentService {
 
     public Resource loadFileAsResource(FileDownloadRequest fileRequest) {
         try {
-            Path filePath = Paths.get(UPLOADED_FOLDER, fileRequest.getUserId(), fileRequest.getFileName()).normalize();
+            Path filePath = Paths.get(UPLOADED_FOLDER, fileRequest.getUserId(), fileRequest.getDocumentType(), fileRequest.getFileName()).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if(resource.exists()) {
                 return resource;

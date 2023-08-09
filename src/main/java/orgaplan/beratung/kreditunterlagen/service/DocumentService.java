@@ -106,4 +106,29 @@ public class DocumentService {
 
         return new DocumentResponse(userId, docMap);
     }
+
+    public boolean deleteDocumentByUserIdAndDocumentId(String userId, Long documentId) {
+        Optional<Document> documentOptional = documentRepository.findById(documentId);
+
+        if (documentOptional.isPresent()) {
+            Document document = documentOptional.get();
+
+            // Check if the document belongs to the user
+            if (document.getUser().getId().equals(userId)) {
+                try {
+                    // Delete the file from the file system
+                    Path path = Paths.get(document.getFilePath());
+                    Files.deleteIfExists(path);
+
+                    // Delete the document record from the database
+                    documentRepository.deleteById(documentId);
+
+                    return true;
+                } catch (IOException e) {
+                    throw new RuntimeException("Error deleting the document file. " + e.getMessage(), e);
+                }
+            }
+        }
+        return false;
+    }
 }

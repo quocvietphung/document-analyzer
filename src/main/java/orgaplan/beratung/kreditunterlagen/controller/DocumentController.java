@@ -111,4 +111,19 @@ public class DocumentController {
         fileRequest.setFileName(fileName);
         return downloadFile(fileRequest, request);
     }
+
+    @DeleteMapping("/delete/{userId}/{documentId}")
+    public ResponseEntity<?> deleteDocument(@PathVariable String userId, @PathVariable Long documentId) {
+        try {
+            boolean deleted = documentService.deleteDocumentByUserIdAndDocumentId(userId, documentId);
+            if (deleted) {
+                return ResponseEntity.ok().body("Document deleted successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Document not found for the given user");
+            }
+        } catch (Exception e) {
+            logger.error("Error occurred while deleting the document", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }

@@ -99,4 +99,16 @@ public class DocumentController {
     public DocumentResponse getUserDocuments(@PathVariable String userId) {
         return documentService.getUserDocumentsByUserId(userId);
     }
+
+    @GetMapping("/view/{userId}/{documentType}/{fileName}")
+    public ResponseEntity<?> viewDocument(@PathVariable String userId,
+                                          @PathVariable String documentType,
+                                          @PathVariable String fileName,
+                                          HttpServletRequest request) {
+        FileDownloadRequest fileRequest = new FileDownloadRequest();
+        fileRequest.setUserId(userId);
+        fileRequest.setDocumentType(documentType);
+        fileRequest.setFileName(fileName);
+        return downloadFile(fileRequest, request);
+    }
 }

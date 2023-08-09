@@ -9,7 +9,7 @@ public class Types {
         GEHALTSABRECHNUNG,
         STEUERBESCHEID,
         AUSWEISKOPIE,
-        GUTHABEN_BEI_BANKEN,
+        KONTOGUTHABEN,
         VERMOEGENSAUFSTELLUNG,
         FINANZBESCHEINIGUNG,
         UMSATZBESCHEINIGUNG
@@ -20,7 +20,7 @@ public class Types {
                     DocumentType.GEHALTSABRECHNUNG.name(),
                     DocumentType.STEUERBESCHEID.name(),
                     DocumentType.AUSWEISKOPIE.name(),
-                    DocumentType.GUTHABEN_BEI_BANKEN.name(),
+                    DocumentType.KONTOGUTHABEN.name(),
                     DocumentType.VERMOEGENSAUFSTELLUNG.name()
             );
 

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import orgaplan.beratung.kreditunterlagen.response.DocumentResponse;
 import orgaplan.beratung.kreditunterlagen.Types;
+
 import static orgaplan.beratung.kreditunterlagen.util.StringUtil.toTitleCase;
 
 import java.io.IOException;
@@ -108,6 +109,12 @@ public class DocumentService {
             }
         }
 
-        return new DocumentResponse(userId, docMap);
+        Map<String, List<Document>> updatedDocMap = new HashMap<>();
+        for (Map.Entry<String, List<Document>> entry : docMap.entrySet()) {
+            String docTypeTitleCase = toTitleCase(entry.getKey());
+            updatedDocMap.put(docTypeTitleCase, entry.getValue());
+        }
+
+        return new DocumentResponse(userId, updatedDocMap);
     }
 }

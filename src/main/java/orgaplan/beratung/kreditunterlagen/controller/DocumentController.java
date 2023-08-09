@@ -43,7 +43,7 @@ public class DocumentController {
     public ResponseEntity<Object> uploadDocument(@RequestParam("file") MultipartFile file,
                                                  @RequestParam("type") String documentType,
                                                  @RequestParam("userId") String userId) {
-        User user = userService.getUserById(userId.toString());
+        User user = userService.getUserById(userId);
         if (user == null) {
             logger.error("User not found with ID: {}", userId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");

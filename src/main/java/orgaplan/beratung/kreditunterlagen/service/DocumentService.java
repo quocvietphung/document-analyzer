@@ -107,7 +107,7 @@ public class DocumentService {
         return new DocumentResponse(userId, docMap);
     }
 
-    public boolean deleteDocumentByUserIdAndDocumentId(String userId, Long documentId) {
+    public boolean deleteDocumentByUserIdAndDocumentId(String userId, String documentId) {
         Optional<Document> documentOptional = documentRepository.findById(documentId);
 
         if (documentOptional.isPresent()) {

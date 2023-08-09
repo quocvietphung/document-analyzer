@@ -1,5 +1,6 @@
 package orgaplan.beratung.kreditunterlagen.model;
 
+import org.hibernate.annotations.GenericGenerator;
 import orgaplan.beratung.kreditunterlagen.Types;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
@@ -17,8 +18,10 @@ import lombok.Setter;
 public class Document {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "id", length = 36)
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")

@@ -1,6 +1,6 @@
 CREATE TABLE documents
 (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id CHAR(36) PRIMARY KEY,
     user_id CHAR(36) NOT NULL,
     document_type VARCHAR(255),
     file_name VARCHAR(255),

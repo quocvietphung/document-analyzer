@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DeleteDocumentRequest {
     private String userId;
-    private Long documentId;
+    private String documentId;
 }

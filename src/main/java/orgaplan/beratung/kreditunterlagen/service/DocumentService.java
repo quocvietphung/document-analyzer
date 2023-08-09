@@ -18,10 +18,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class DocumentService {
@@ -95,7 +92,7 @@ public class DocumentService {
                 ? Types.PRIVAT_KUNDEN_DOCUMENTS
                 : Types.FIRMEN_KUNDEN_DOCUMENTS;
 
-        Map<String, List<Document>> docMap = new HashMap<>();
+        Map<String, List<Document>> docMap = new LinkedHashMap<>();
         for (String docType : requiredDocuments) {
             docMap.put(docType, new ArrayList<>());
         }
@@ -107,11 +104,6 @@ public class DocumentService {
             }
         }
 
-        Map<String, List<Document>> updatedDocMap = new HashMap<>();
-        for (Map.Entry<String, List<Document>> entry : docMap.entrySet()) {
-            updatedDocMap.put(entry.getKey(), entry.getValue());
-        }
-
-        return new DocumentResponse(userId, updatedDocMap);
+        return new DocumentResponse(userId, docMap);
     }
 }

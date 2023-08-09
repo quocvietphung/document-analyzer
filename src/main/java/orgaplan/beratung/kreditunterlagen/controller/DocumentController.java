@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import orgaplan.beratung.kreditunterlagen.model.Document;
 import orgaplan.beratung.kreditunterlagen.model.User;
+import orgaplan.beratung.kreditunterlagen.request.DeleteDocumentRequest;
 import orgaplan.beratung.kreditunterlagen.request.FileDownloadRequest;
 import orgaplan.beratung.kreditunterlagen.response.DocumentResponse;
 import orgaplan.beratung.kreditunterlagen.service.DocumentService;
@@ -112,10 +113,10 @@ public class DocumentController {
         return downloadFile(fileRequest, request);
     }
 
-    @DeleteMapping("/delete/{userId}/{documentId}")
-    public ResponseEntity<?> deleteDocument(@PathVariable String userId, @PathVariable Long documentId) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteDocument(@RequestBody DeleteDocumentRequest request) {
         try {
-            boolean deleted = documentService.deleteDocumentByUserIdAndDocumentId(userId, documentId);
+            boolean deleted = documentService.deleteDocumentByUserIdAndDocumentId(request.getUserId(), request.getDocumentId());
             if (deleted) {
                 return ResponseEntity.ok().body("Document deleted successfully");
             } else {

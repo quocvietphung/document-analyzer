@@ -13,8 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import orgaplan.beratung.kreditunterlagen.response.DocumentResponse;
 import orgaplan.beratung.kreditunterlagen.Types;
 
-import static orgaplan.beratung.kreditunterlagen.util.StringUtil.toTitleCase;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -48,7 +46,7 @@ public class DocumentService {
 
         document.setUser(user);
 
-        String docTypeFolder = toTitleCase(documentType) + "/";
+        String docTypeFolder = documentType + "/";
         String userFolder = UPLOADED_FOLDER + user.getId() + "/" + docTypeFolder;
         Path path = Paths.get(userFolder + file.getOriginalFilename());
 
@@ -68,7 +66,7 @@ public class DocumentService {
 
     public Resource loadFileAsResource(FileDownloadRequest fileRequest) {
         try {
-            String normalizedDocumentType = toTitleCase(fileRequest.getDocumentType());
+            String normalizedDocumentType = fileRequest.getDocumentType();
             Path filePath = Paths.get(UPLOADED_FOLDER, fileRequest.getUserId(), normalizedDocumentType, fileRequest.getFileName()).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if(resource.exists()) {
@@ -111,8 +109,7 @@ public class DocumentService {
 
         Map<String, List<Document>> updatedDocMap = new HashMap<>();
         for (Map.Entry<String, List<Document>> entry : docMap.entrySet()) {
-            String docTypeTitleCase = toTitleCase(entry.getKey());
-            updatedDocMap.put(docTypeTitleCase, entry.getValue());
+            updatedDocMap.put(entry.getKey(), entry.getValue());
         }
 
         return new DocumentResponse(userId, updatedDocMap);

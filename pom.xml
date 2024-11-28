@@ -2,40 +2,40 @@
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<!-- POM format -->
+	<!-- Định dạng POM -->
 	<modelVersion>4.0.0</modelVersion>
 
-	<!-- Parent POM of Spring Boot Starter -->
+	<!-- Parent POM của Spring Boot Starter -->
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.1.2</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/> <!-- Tìm parent từ repository -->
 	</parent>
 
-	<!-- Basic project information -->
+	<!-- Thông tin cơ bản về dự án -->
 	<groupId>orgaplan.beratung</groupId>
 	<artifactId>Kreditunterlagen-API</artifactId>
 	<version>1.0.1-SNAPSHOT</version>
 	<name>KreditunterlagenAPI</name>
 	<description>KreditunterlagenAPI</description>
 
-	<!-- Properties -->
+	<!-- Các thuộc tính -->
 	<properties>
 		<java.version>21</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 	</properties>
 
-	<!-- Project dependencies -->
+	<!-- Các phụ thuộc của dự án -->
 	<dependencies>
-		<!-- Spring Boot Starter Data JPA (includes Hibernate and Spring JDBC) -->
+		<!-- Spring Boot Starter Data JPA (bao gồm Hibernate và Spring JDBC) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
-		<!-- MySQL JDBC driver -->
+		<!-- Trình điều khiển JDBC MySQL -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -45,16 +45,16 @@
 		<!-- Flyway Migration -->
 		<dependency>
 			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-mysql</artifactId>
+			<artifactId>flyway-core</artifactId>
 		</dependency>
 
-		<!-- Spring Boot Starter for Web (includes Spring MVC) -->
+		<!-- Spring Boot Starter cho Web (bao gồm Spring MVC) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-		<!-- Spring Boot Starter for Test -->
+		<!-- Spring Boot Starter cho Test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -65,7 +65,6 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
-			<version>5.8.1</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -73,7 +72,6 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.8.1</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -96,7 +94,7 @@
 		<dependency>
 			<groupId>org.jetbrains</groupId>
 			<artifactId>annotations</artifactId>
-			<version>RELEASE</version>
+			<version>24.0.1</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -159,6 +157,7 @@
 			<type>pom</type>
 		</dependency>
 
+		<!-- Netty Resolver DNS Native cho macOS -->
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-resolver-dns-native-macos</artifactId>
@@ -168,8 +167,10 @@
 		</dependency>
 	</dependencies>
 
+	<!-- Cấu hình build -->
 	<build>
 		<plugins>
+			<!-- Spring Boot Maven Plugin -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

@@ -63,24 +63,6 @@ public class UserController {
 
     @PostMapping("/createNewClient")
     public ResponseEntity<Map<String, Object>> createNewClient(@RequestBody CreateNewClientRequest request) {
-        // 1. Step: Generate start password with length of 9
-        // 2. Step: Make API request to get new User UUID; Request: Mail, Start-Password -> Response: UUID from user;
-        /*
-            API REQUEST:
-            Type: POST
-            URL: http://127.0.0.1:8500/user/create
-            RESPONSE:
-                CODE: 200
-                BODY: STRING (UUID from new user)
-            REQUEST:
-                BODY:
-                    firstname: STRING
-                    lastname: STRING
-                    password: STRING
-                    mail: STRING
-                    role: STRING ("privat_kunde" OR "firmen_kunde")
-         */
-
         if (userService.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Ein Benutzer mit dieser E-Mail existiert bereits");
         }

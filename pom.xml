@@ -45,7 +45,8 @@
 		<!-- Flyway Migration -->
 		<dependency>
 			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
+			<artifactId>flyway-mysql</artifactId>
+			<version>8.2.1</version>
 		</dependency>
 
 		<!-- Spring Boot Starter cho Web (bao gồm Spring MVC) -->

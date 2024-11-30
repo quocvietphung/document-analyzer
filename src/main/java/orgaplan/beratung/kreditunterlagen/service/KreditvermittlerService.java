@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,11 +75,6 @@ public class KreditvermittlerService {
                 .orElseThrow(() -> new IllegalArgumentException("Beziehung zwischen vermittlerId: " + vermittlerId + " und userId: " + userId + " nicht gefunden"));
     }
 
-    public boolean isKreditvermittler(Authentication authentication) {
-        return authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_kreditvermittler"));
-    }
-
     public KreditvermittlerInfo getKreditvermittlerInfoById(String vermittlerId) {
         return kreditvermittlerRepository.findById(vermittlerId)
                 .map(this::convertToKreditvermittlerInfo)
@@ -104,18 +98,7 @@ public class KreditvermittlerService {
 
         kreditvermittler.setRole(Types.UserRole.KREDIT_VERMITTLER);
 
-        responseUUID = webClient.post()
-                .uri(url)
-                .bodyValue(Map.of(
-                        "firstname", kreditvermittler.getFirstName(),
-                        "lastname", kreditvermittler.getLastName(),
-                        "password", startPassword,
-                        "mail", kreditvermittler.getEmail(),
-                        "role", kreditvermittler.getRole().toString()
-                ))
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        responseUUID = UUID.randomUUID().toString();
 
         kreditvermittler.setId(responseUUID);
         kreditvermittler.setFirstName(kreditvermittler.getFirstName());

@@ -3,8 +3,6 @@ package orgaplan.beratung.kreditunterlagen.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import orgaplan.beratung.kreditunterlagen.model.Kreditvermittler;
 import orgaplan.beratung.kreditunterlagen.model.User;
@@ -38,6 +36,7 @@ public class KreditvermittlerController {
     @Autowired
     private UserService userService;
 
+    @PostMapping("/createKreditvermittler")
     public ResponseEntity<Kreditvermittler> createKreditvermittler(@RequestBody Kreditvermittler kreditvermittler) {
         Kreditvermittler newKreditvermittler = kreditvermittlerService.createKreditvermittler(kreditvermittler);
         return ResponseEntity.status(HttpStatus.CREATED).body(newKreditvermittler);
@@ -75,7 +74,6 @@ public class KreditvermittlerController {
         }
     }
 
-    @PreAuthorize("hasRole('kreditvermittler')")
     @GetMapping("/clientStatistics")
     public ResponseEntity<ClientStatisticsResponse> getClientStatistics(Principal principal) {
         String vermittlerId = principal.getName();
@@ -83,7 +81,6 @@ public class KreditvermittlerController {
         return ResponseEntity.ok(statistics);
     }
 
-    @PreAuthorize("hasRole('kreditvermittler')")
     @GetMapping("/getClientsByVermittler")
     public ResponseEntity<List<ClientResponse>> getClientsByVermittler(Principal principal) {
         String vermittlerId = principal.getName();
@@ -91,7 +88,6 @@ public class KreditvermittlerController {
         return ResponseEntity.ok(clientResponses);
     }
 
-    @PreAuthorize("hasRole('kreditvermittler')")
     @GetMapping("/getClientDetails")
     public ResponseEntity<ClientDetail> getClientDetails(Principal principal, @RequestParam String clientId) {
         String vermittlerId = principal.getName();
@@ -103,7 +99,6 @@ public class KreditvermittlerController {
         }
     }
 
-    @PreAuthorize("hasRole('kreditvermittler')")
     @PutMapping("/activateForwardBanks")
     public ResponseEntity<Object> activateForwardBanks(Principal principal,
                                                        @RequestParam String userId,
@@ -113,7 +108,6 @@ public class KreditvermittlerController {
         return ResponseEntity.ok().body("Forward Banks updated successfully");
     }
 
-    @PreAuthorize("hasRole('kreditvermittler')")
     @PutMapping("/editKreditvermittler")
     public ResponseEntity<Kreditvermittler> editKreditvermittler(Principal principal,
                                                                  @ModelAttribute KreditvermittlerForm kreditvermittlerForm) {
@@ -128,49 +122,4 @@ public class KreditvermittlerController {
         }
     }
 
-    @PreAuthorize("hasRole('kreditvermittler') || hasRole('privat_kunde') || hasRole('firmen_kunde')")
-    @GetMapping("/image")
-    public ResponseEntity<Resource> getKreditvermittlerImage(Authentication authentication,
-                                                             @RequestParam("type") String type) {
-
-        boolean isKreditvermittler = kreditvermittlerService.isKreditvermittler(authentication);
-        String vermittlerId;
-
-        if (isKreditvermittler) {
-            vermittlerId = authentication.getName();
-        } else {
-            String userId = authentication.getName();
-            User user = userService.findUserById(userId);
-            vermittlerId = user.getVermittlerId();
-        }
-
-        try {
-            Resource file = kreditvermittlerService.findImage(vermittlerId, type);
-            if (file == null) {
-                return ResponseEntity.notFound().build();
-            }
-
-            String contentType = Files.probeContentType(file.getFile().toPath());
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFilename() + "\"")
-                    .body(file);
-
-        } catch (IOException ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @PreAuthorize("hasRole('kreditvermittler')")
-    @DeleteMapping("/deleteUser")
-    public ResponseEntity<?> deleteUser(Principal principal, @RequestParam String userId) {
-        try {
-            String vermittlerId = principal.getName();
-            kreditvermittlerService.deleteUser(vermittlerId, userId);
-            return ResponseEntity.ok("User has been successfully deleted.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
 }

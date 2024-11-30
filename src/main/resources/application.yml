@@ -36,18 +36,3 @@ spring:
           auth: true
           starttls:
             enable: true
-
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8081/realms/myrealm
-      client:
-        registration:
-          keycloak:
-            client-id: spring-boot-client
-            client-secret: client-secret
-            provider: keycloak
-        provider:
-          keycloak:
-            issuer-uri: http://localhost:8081/realms/myrealm

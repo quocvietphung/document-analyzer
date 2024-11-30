@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -84,18 +85,7 @@ public class UserService {
             validateCompanyFields(request);
         }
 
-        String responseUUID = webClient.post()
-                .uri(url)
-                .bodyValue(Map.of(
-                        "firstname", request.getFirstName(),
-                        "lastname", request.getLastName(),
-                        "password", startPassword,
-                        "mail", request.getEmail(),
-                        "role", role.toString()
-                ))
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        String responseUUID = UUID.randomUUID().toString();
 
         User user = User.builder()
                 .id(responseUUID)

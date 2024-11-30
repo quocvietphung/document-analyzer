@@ -38,7 +38,6 @@ public class KreditvermittlerController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/createKreditvermittler")
     public ResponseEntity<Kreditvermittler> createKreditvermittler(@RequestBody Kreditvermittler kreditvermittler) {
         Kreditvermittler newKreditvermittler = kreditvermittlerService.createKreditvermittler(kreditvermittler);
         return ResponseEntity.status(HttpStatus.CREATED).body(newKreditvermittler);

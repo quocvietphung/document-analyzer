@@ -1,0 +1,25 @@
+{
+  "realm": "myrealm",
+  "enabled": true,
+  "roles": {
+    "realm": [
+      { "name": "KREDIT_VERMITTLER" },
+      { "name": "PRIVAT_KUNDE" },
+      { "name": "FIRMEN_KUNDE" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "spring-boot-client",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "secret": "client-secret",
+      "redirectUris": [
+        "http://localhost:8080/*"
+      ],
+      "webOrigins": [
+        "*"
+      ]
+    }
+  ]
+}

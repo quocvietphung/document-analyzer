@@ -51,7 +51,6 @@ public class DocumentController {
     @Autowired
     private DocumentRepository documentRepository;
 
-    @PreAuthorize("hasRole('privat_kunde') || hasRole('firmen_kunde')")
     @PostMapping("/upload")
     public ResponseEntity<Object> uploadDocument(@RequestParam("file") MultipartFile file,
                                                  @RequestParam("type") String documentType,

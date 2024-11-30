@@ -38,7 +38,6 @@ public class UserController {
     @Autowired
     private KreditvermittlerService kreditvermittlerService;
 
-    @PreAuthorize("hasRole('kreditvermittler') || hasRole('privat_kunde') || hasRole('firmen_kunde')")
     @GetMapping("/test")
     public ResponseEntity<String> sayHello(Authentication authentication, Principal principal) {
         if (authentication instanceof JwtAuthenticationToken) {
@@ -83,7 +82,6 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('kreditvermittler')")
     @GetMapping
     public List<User> getUsers() {
         return userService.getUsers();
@@ -106,7 +104,6 @@ public class UserController {
         return ResponseEntity.ok(userDetail);
     }
 
-    @PreAuthorize("hasRole('privat_kunde') || hasRole('firmen_kunde')")
     @PutMapping("/savePercentageUploaded")
     public ResponseEntity<Object> savePercentageUploaded(Principal principal, @RequestParam BigDecimal percentageUploaded) {
         String userId = principal.getName();
@@ -114,7 +111,6 @@ public class UserController {
         return ResponseEntity.ok().body("Percentage updated successfully");
     }
 
-    @PreAuthorize("hasRole('privat_kunde') || hasRole('firmen_kunde')")
     @PutMapping("/activeSecondPartner")
     public ResponseEntity<Object> activeSecondPartner(Principal principal, @RequestParam boolean activeSecondPartner) {
         String userId = principal.getName();
@@ -122,7 +118,6 @@ public class UserController {
         return ResponseEntity.ok().body("Zweiter Partner erfolgreich aktualisiert");
     }
 
-    @PreAuthorize("hasRole('privat_kunde') || hasRole('firmen_kunde')")
     @PutMapping("/editUser")
     public ResponseEntity<User> editUser(Authentication authentication,
                                          @RequestBody User updatedUserFields) {

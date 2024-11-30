@@ -15,7 +15,6 @@ public class CompanyController {
     @Autowired
     private CompanyService companyService;
 
-    @PreAuthorize("hasRole('firmen_kunde')")
     @GetMapping("/getCompanyByUser")
     public @ResponseBody Company getCompanyByUser(Authentication authentication) {
         String userId = authentication.getName();
@@ -25,7 +24,6 @@ public class CompanyController {
         return companyService.getCompanyByUserId(userId);
     }
 
-    @PreAuthorize("hasRole('firmen_kunde')")
     @PutMapping("/editCompany")
     public @ResponseBody Company updateCompany(Authentication authentication,
                                                @RequestBody Company companyRequest) {

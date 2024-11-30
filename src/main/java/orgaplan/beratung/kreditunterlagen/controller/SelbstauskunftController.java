@@ -22,7 +22,6 @@ public class SelbstauskunftController {
     @Autowired
     private SelbstauskunftService selbstauskunftService;
 
-    @PreAuthorize("hasRole('privat_kunde') || hasRole('firmen_kunde')")
     @PostMapping("/createSelbstauskunftFromAI")
     public Mono<ResponseEntity<SelbstauskunftDTO>> createSelbstauskunftFromAI(Principal principal) {
         return selbstauskunftService.createSelbstauskunftFromAI(principal.getName())
@@ -30,7 +29,6 @@ public class SelbstauskunftController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("hasRole('privat_kunde') || hasRole('firmen_kunde')")
     @PostMapping("/createSelbstauskunft")
     public ResponseEntity<SelbstauskunftDTO> createSelbstauskunft(Principal principal, @Validated @RequestBody SelbstauskunftDTO request) {
         String userId = principal.getName();
@@ -38,7 +36,6 @@ public class SelbstauskunftController {
         return ResponseEntity.ok(savedSelbstauskunftDTO);
     }
 
-    @PreAuthorize("hasRole('privat_kunde') || hasRole('firmen_kunde')")
     @PutMapping("/saveTemporary")
     public ResponseEntity<SelbstauskunftDTO> saveTemporarySelbstauskunft(Principal principal, @RequestBody SelbstauskunftDTO request) {
         String userId = principal.getName();
@@ -46,7 +43,6 @@ public class SelbstauskunftController {
         return ResponseEntity.ok(savedSelbstauskunftDTO);
     }
 
-    @PreAuthorize("hasRole('privat_kunde') || hasRole('firmen_kunde')")
     @GetMapping("/getSelbstauskunftByUser")
     public ResponseEntity<SelbstauskunftDTO> getSelbstauskunftByUser(Principal principal) {
         String userId = principal.getName();

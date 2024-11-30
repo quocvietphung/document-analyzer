@@ -30,7 +30,6 @@ public class CreditRequestController {
     @Autowired
     private KreditvermittlerService kreditvermittlerService;
 
-    @PreAuthorize("hasRole('privat_kunde') || hasRole('firmen_kunde')")
     @PostMapping("/send")
     public CreditRequestResponse saveCreditRequest(Principal principal,
                                                    @Validated({ValidationGroups.Create.class, Default.class})
@@ -39,7 +38,6 @@ public class CreditRequestController {
         return creditRequestService.saveCreditRequest(userId, creditRequestForm);
     }
 
-    @PreAuthorize("hasRole('privat_kunde') || hasRole('firmen_kunde')")
     @PutMapping("/editCreditRequest")
     public CreditRequestResponse editCreditRequest(Principal principal,
                                                    @Validated({ValidationGroups.Update.class, Default.class})
@@ -48,7 +46,6 @@ public class CreditRequestController {
         return creditRequestService.updateCreditRequest(userId, creditRequestForm.getId(), creditRequestForm);
     }
 
-    @PreAuthorize("hasRole('privat_kunde') || hasRole('firmen_kunde')")
     @GetMapping("/getCreditRequestsByUser")
     public ResponseEntity<?> getCreditRequestsByUser(Authentication authentication){
         String userId = authentication.getName();
@@ -58,7 +55,6 @@ public class CreditRequestController {
         return ResponseEntity.ok(responseList);
     }
 
-    @PreAuthorize("hasRole('privat_kunde') || hasRole('firmen_kunde')")
     @DeleteMapping("/deleteCreditRequest")
     public ResponseEntity<?> deleteCreditRequestByIdAndUser(Principal principal, @RequestParam String creditRequestId) {
         String userId = principal.getName();

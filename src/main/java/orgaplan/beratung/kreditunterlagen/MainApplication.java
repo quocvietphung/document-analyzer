@@ -4,10 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class KreditunterlagenApplication {
-
+public class MainApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(KreditunterlagenApplication.class, args);
+		SpringApplication.run(MainApplication.class, args);
 	}
-
 }

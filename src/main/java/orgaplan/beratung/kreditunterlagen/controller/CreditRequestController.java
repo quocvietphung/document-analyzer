@@ -32,7 +32,7 @@ public class CreditRequestController {
     public CreditRequestResponse saveCreditRequest(Principal principal,
                                                    @Validated({ValidationGroups.Create.class, Default.class})
                                                    @RequestBody CreditRequestForm creditRequestForm) throws Exception {
-        String userId = principal.getName();
+        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
         return creditRequestService.saveCreditRequest(userId, creditRequestForm);
     }
 
@@ -40,13 +40,13 @@ public class CreditRequestController {
     public CreditRequestResponse editCreditRequest(Principal principal,
                                                    @Validated({ValidationGroups.Update.class, Default.class})
                                                    @RequestBody CreditRequestForm creditRequestForm) throws Exception {
-        String userId = principal.getName();
+        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
         return creditRequestService.updateCreditRequest(userId, creditRequestForm.getId(), creditRequestForm);
     }
 
     @GetMapping("/getCreditRequestsByUser")
     public ResponseEntity<?> getCreditRequestsByUser(){
-        String userId = "123";
+        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
 
         List<CreditRequestResponse> responseList = creditRequestService.getCreditRequestsByUser(userId);
 

@@ -175,6 +175,7 @@ public class UserService {
     @Transactional
     public UserDetail getUserById(String userId) {
         User user = findUserById(userId);
+        System.out.println("User: " + user);
         Kreditvermittler vermittler = null;
         if (user.getVermittlerId() != null && !user.getVermittlerId().isEmpty()) {
             vermittler = findKreditvermittlerById(user.getVermittlerId());

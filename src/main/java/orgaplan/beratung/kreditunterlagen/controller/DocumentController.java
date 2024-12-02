@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -50,10 +49,9 @@ public class DocumentController {
 
     @PostMapping("/upload")
     public ResponseEntity<Object> uploadDocument(@RequestParam("file") MultipartFile file,
-                                                 @RequestParam("type") String documentType,
-                                                 Principal principal) throws Exception {
+                                                 @RequestParam("type") String documentType) throws Exception {
 
-        String userId = principal.getName();
+        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
         User user = userService.findUserById(userId);
         documentValidation.validateDocumentTypeForUserRole(documentType, user);
         Document document = documentService.save(file, documentType, user);
@@ -67,7 +65,7 @@ public class DocumentController {
 
     @GetMapping("/getUserDocuments")
     public DocumentResponse getUserDocuments() {
-        String userId = "123)";
+        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
         return documentService.getUserDocumentsByUserId(userId);
     }
 
@@ -75,8 +73,8 @@ public class DocumentController {
     public ResponseEntity<?> viewDocument(@RequestParam String documentId,
                                           @RequestParam(required = false) String userId,
                                           HttpServletRequest request) {
-        String currentUserId = "123";
-        boolean isKreditvermittler = true;
+        String currentUserId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
+        boolean isKreditvermittler = false;
 
         Optional<Document> documentOptional;
 
@@ -119,8 +117,8 @@ public class DocumentController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteDocument(@RequestParam String documentId , Principal principal) {
-        String userId = principal.getName();
+    public ResponseEntity<String> deleteDocument(@RequestParam String documentId) {
+        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
         boolean deleted = documentService.deleteDocument(documentId, userId);
         if (deleted) {
             return ResponseEntity.ok().body("Document deleted successfully");

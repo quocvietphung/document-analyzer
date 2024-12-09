@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import orgaplan.beratung.kreditunterlagen.model.Kreditvermittler;
-import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.repository.UserRepository;
 import orgaplan.beratung.kreditunterlagen.request.KreditvermittlerForm;
 import orgaplan.beratung.kreditunterlagen.response.*;
@@ -13,8 +12,6 @@ import orgaplan.beratung.kreditunterlagen.response.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.http.HttpHeaders;
@@ -28,13 +25,7 @@ import orgaplan.beratung.kreditunterlagen.service.UserService;
 public class KreditvermittlerController {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private KreditvermittlerService kreditvermittlerService;
-
-    @Autowired
-    private UserService userService;
 
     @PostMapping("/createKreditvermittler")
     public ResponseEntity<Kreditvermittler> createKreditvermittler(@RequestBody Kreditvermittler kreditvermittler) {

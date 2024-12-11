@@ -22,29 +22,30 @@ public class SelbstauskunftController {
     private SelbstauskunftService selbstauskunftService;
 
     @PostMapping("/createSelbstauskunftFromAI")
-    public Mono<ResponseEntity<SelbstauskunftDTO>> createSelbstauskunftFromAI(Principal principal) {
-        return selbstauskunftService.createSelbstauskunftFromAI(principal.getName())
+    public Mono<ResponseEntity<SelbstauskunftDTO>> createSelbstauskunftFromAI() {
+        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
+        return selbstauskunftService.createSelbstauskunftFromAI(userId)
                 .map(selbstauskunftDTO -> ResponseEntity.ok().body(selbstauskunftDTO))
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/createSelbstauskunft")
     public ResponseEntity<SelbstauskunftDTO> createSelbstauskunft(Principal principal, @Validated @RequestBody SelbstauskunftDTO request) {
-        String userId = principal.getName();
+        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
         SelbstauskunftDTO savedSelbstauskunftDTO = selbstauskunftService.saveSelbstauskunft(userId, request, false);
         return ResponseEntity.ok(savedSelbstauskunftDTO);
     }
 
     @PutMapping("/saveTemporary")
     public ResponseEntity<SelbstauskunftDTO> saveTemporarySelbstauskunft(Principal principal, @RequestBody SelbstauskunftDTO request) {
-        String userId = principal.getName();
+        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
         SelbstauskunftDTO savedSelbstauskunftDTO = selbstauskunftService.saveSelbstauskunft(userId, request, true);
         return ResponseEntity.ok(savedSelbstauskunftDTO);
     }
 
     @GetMapping("/getSelbstauskunftByUser")
     public ResponseEntity<SelbstauskunftDTO> getSelbstauskunftByUser(Principal principal) {
-        String userId = principal.getName();
+        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
         SelbstauskunftDTO selbstauskunftDTO = selbstauskunftService.getSelbstauskunftByUser(userId);
         return ResponseEntity.ok(selbstauskunftDTO);
     }

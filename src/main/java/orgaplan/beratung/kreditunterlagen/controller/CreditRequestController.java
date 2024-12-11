@@ -32,7 +32,7 @@ public class CreditRequestController {
     public CreditRequestResponse saveCreditRequest(Principal principal,
                                                    @Validated({ValidationGroups.Create.class, Default.class})
                                                    @RequestBody CreditRequestForm creditRequestForm) throws Exception {
-        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
+        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
         return creditRequestService.saveCreditRequest(userId, creditRequestForm);
     }
 
@@ -40,13 +40,13 @@ public class CreditRequestController {
     public CreditRequestResponse editCreditRequest(Principal principal,
                                                    @Validated({ValidationGroups.Update.class, Default.class})
                                                    @RequestBody CreditRequestForm creditRequestForm) throws Exception {
-        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
+        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
         return creditRequestService.updateCreditRequest(userId, creditRequestForm.getId(), creditRequestForm);
     }
 
     @GetMapping("/getCreditRequestsByUser")
     public ResponseEntity<?> getCreditRequestsByUser(){
-        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
+        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
 
         List<CreditRequestResponse> responseList = creditRequestService.getCreditRequestsByUser(userId);
 
@@ -55,7 +55,7 @@ public class CreditRequestController {
 
     @DeleteMapping("/deleteCreditRequest")
     public ResponseEntity<?> deleteCreditRequestByIdAndUser(Principal principal, @RequestParam String creditRequestId) {
-        String userId = principal.getName();
+        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
         creditRequestService.deleteCreditRequestByIdAndUser(userId, creditRequestId);
         return ResponseEntity.ok("Credit Request Deleted Successfully");
     }

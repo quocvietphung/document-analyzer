@@ -67,9 +67,9 @@ public class UserController {
     }
 
     @GetMapping("/getUser")
-    public ResponseEntity<UserDetail> getUserById() {
+    public ResponseEntity<UserDetail> getUser() {
         boolean isKreditvermittler = false;
-        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
+        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
 
         UserDetail userDetail;
         if (isKreditvermittler) {
@@ -84,21 +84,21 @@ public class UserController {
 
     @PutMapping("/savePercentageUploaded")
     public ResponseEntity<Object> savePercentageUploaded(Principal principal, @RequestParam BigDecimal percentageUploaded) {
-        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
+        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
         userService.updateUploadPercentage(userId, percentageUploaded);
         return ResponseEntity.ok().body("Percentage updated successfully");
     }
 
     @PutMapping("/activeSecondPartner")
     public ResponseEntity<Object> activeSecondPartner(Principal principal, @RequestParam boolean activeSecondPartner) {
-        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
+        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
         userService.updateSecondPartner(userId, activeSecondPartner);
         return ResponseEntity.ok().body("Zweiter Partner erfolgreich aktualisiert");
     }
 
     @PutMapping("/editUser")
     public ResponseEntity<User> editUser(@RequestBody User updatedUserFields) {
-        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
+        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
         User updatedUser = userService.editUser(userId, updatedUserFields);
         return ResponseEntity.ok(updatedUser);
     }

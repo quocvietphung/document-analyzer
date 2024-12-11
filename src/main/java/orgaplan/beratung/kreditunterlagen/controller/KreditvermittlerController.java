@@ -67,21 +67,21 @@ public class KreditvermittlerController {
 
     @GetMapping("/clientStatistics")
     public ResponseEntity<ClientStatisticsResponse> getClientStatistics(Principal principal) {
-        String vermittlerId = principal.getName();
+        String vermittlerId = "c1e5e775-25cf-4330-8215-a5c8fb451fd0";
         ClientStatisticsResponse statistics = kreditvermittlerService.getClientStatistics(vermittlerId);
         return ResponseEntity.ok(statistics);
     }
 
     @GetMapping("/getClientsByVermittler")
     public ResponseEntity<List<ClientResponse>> getClientsByVermittler(Principal principal) {
-        String vermittlerId = principal.getName();
+        String vermittlerId = "c1e5e775-25cf-4330-8215-a5c8fb451fd0";
         List<ClientResponse> clientResponses = kreditvermittlerService.getClientsByVermittlerId(vermittlerId);
         return ResponseEntity.ok(clientResponses);
     }
 
     @GetMapping("/getClientDetails")
-    public ResponseEntity<ClientDetail> getClientDetails(Principal principal, @RequestParam String clientId) {
-        String vermittlerId = principal.getName();
+    public ResponseEntity<ClientDetail> getClientDetails(@RequestParam String clientId) {
+        String vermittlerId = "c1e5e775-25cf-4330-8215-a5c8fb451fd0";
         try {
             ClientDetail clientDetail = kreditvermittlerService.getClientResponseByVermittlerIdAndClientId(vermittlerId, clientId);
             return ResponseEntity.ok(clientDetail);
@@ -91,10 +91,9 @@ public class KreditvermittlerController {
     }
 
     @PutMapping("/activateForwardBanks")
-    public ResponseEntity<Object> activateForwardBanks(Principal principal,
-                                                       @RequestParam String userId,
+    public ResponseEntity<Object> activateForwardBanks(@RequestParam String userId,
                                                        @RequestParam Boolean forwardedBanks) {
-        String vermittlerId = principal.getName();
+        String vermittlerId = "c1e5e775-25cf-4330-8215-a5c8fb451fd0";
         kreditvermittlerService.activateForwardBanksRequest(vermittlerId, userId, forwardedBanks);
         return ResponseEntity.ok().body("Forward Banks updated successfully");
     }
@@ -102,7 +101,7 @@ public class KreditvermittlerController {
     @PutMapping("/editKreditvermittler")
     public ResponseEntity<Kreditvermittler> editKreditvermittler(Principal principal,
                                                                  @ModelAttribute KreditvermittlerForm kreditvermittlerForm) {
-        String vermittlerId = principal.getName();
+        String vermittlerId = "c1e5e775-25cf-4330-8215-a5c8fb451fd0";
 
         try {
             Kreditvermittler updatedKreditvermittler = kreditvermittlerService.editKreditvermittler(vermittlerId, kreditvermittlerForm);

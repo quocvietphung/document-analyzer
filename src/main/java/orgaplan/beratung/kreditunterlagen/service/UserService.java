@@ -75,9 +75,6 @@ public class UserService {
     }
 
     public User createNewClient(CreateNewClientRequest request) {
-        String url = "http://127.0.0.1:8500/user/create";
-        String startPassword = Util.generateStartPassword();
-
         UserRoleValidation.validateRole(request.getRole());
         Types.UserRole role = Types.UserRole.valueOf(request.getRole());
 
@@ -94,6 +91,7 @@ public class UserService {
                 .lastName(request.getLastName())
                 .phoneNumber(request.getPhoneNumber())
                 .email(request.getEmail())
+                .passWord(request.getPassword())
                 .role(role)
                 .withSecondPartner(false)
                 .isActive(false)

@@ -39,6 +39,10 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @NotNull
+    @Column(name = "password", nullable = false, unique = true)
+    private String password;
+
     @Enumerated(EnumType.STRING)
     @NotNull
     @Column(name = "role", nullable = false)

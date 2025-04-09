@@ -92,14 +92,8 @@ public class KreditvermittlerService {
     }
 
     public Kreditvermittler createKreditvermittler(Kreditvermittler kreditvermittler) {
-        String url = "http://127.0.0.1:8500/user/create";
-        String startPassword = Util.generateStartPassword();
-        String responseUUID;
-
+        String responseUUID = UUID.randomUUID().toString();
         kreditvermittler.setRole(Types.UserRole.KREDIT_VERMITTLER);
-
-        responseUUID = UUID.randomUUID().toString();
-
         kreditvermittler.setId(responseUUID);
         kreditvermittler.setFirstName(kreditvermittler.getFirstName());
         kreditvermittler.setLastName(kreditvermittler.getLastName());

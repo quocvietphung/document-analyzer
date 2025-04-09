@@ -30,9 +30,6 @@ public class UserController {
     @Autowired
     private EmailService emailService;
 
-    @Autowired
-    private KreditvermittlerService kreditvermittlerService;
-
     @GetMapping("/test")
     public ResponseEntity<String> sayHello() {
         System.out.println("authentication");
@@ -44,21 +41,10 @@ public class UserController {
         if (userService.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Ein Benutzer mit dieser E-Mail existiert bereits");
         }
-
-        String startPassword = Util.generateStartPassword();
         User newClient = userService.createNewClient(request);
         Map<String, Object> response = new HashMap<>();
         response.put("user", newClient);
-
-        // 3. Step: Mail with "Nutzername" = E-Mail and "Startpasswort"
-        String email = request.getEmail();
-        try {
-            emailService.sendWelcomeEmail(email,startPassword);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Failed to send email."));
-        }
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
@@ -67,10 +53,7 @@ public class UserController {
     }
 
     @GetMapping("/getUser")
-    public ResponseEntity<UserDetail> getUser() {
-        boolean isKreditvermittler = true;
-        String userId = "c1e5e775-25cf-4330-8215-a5c8fb451fd0";
-
+    public ResponseEntity<UserDetail> getUser(@RequestParam String userId, @RequestParam boolean isKreditvermittler) {
         UserDetail userDetail;
         if (isKreditvermittler) {
             Kreditvermittler kreditvermittler = userService.findKreditvermittlerById(userId);
@@ -78,27 +61,23 @@ public class UserController {
         } else {
             userDetail = userService.getUserById(userId);
         }
-
         return ResponseEntity.ok(userDetail);
     }
 
     @PutMapping("/savePercentageUploaded")
-    public ResponseEntity<Object> savePercentageUploaded(Principal principal, @RequestParam BigDecimal percentageUploaded) {
-        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
+    public ResponseEntity<Object> savePercentageUploaded(@RequestParam String userId, @RequestParam BigDecimal percentageUploaded) {
         userService.updateUploadPercentage(userId, percentageUploaded);
         return ResponseEntity.ok().body("Percentage updated successfully");
     }
 
     @PutMapping("/activeSecondPartner")
-    public ResponseEntity<Object> activeSecondPartner(Principal principal, @RequestParam boolean activeSecondPartner) {
-        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
+    public ResponseEntity<Object> activeSecondPartner(@RequestParam String userId, @RequestParam boolean activeSecondPartner) {
         userService.updateSecondPartner(userId, activeSecondPartner);
         return ResponseEntity.ok().body("Zweiter Partner erfolgreich aktualisiert");
     }
 
     @PutMapping("/editUser")
-    public ResponseEntity<User> editUser(@RequestBody User updatedUserFields) {
-        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
+    public ResponseEntity<User> editUser(@RequestParam String userId, @RequestBody User updatedUserFields) {
         User updatedUser = userService.editUser(userId, updatedUserFields);
         return ResponseEntity.ok(updatedUser);
     }

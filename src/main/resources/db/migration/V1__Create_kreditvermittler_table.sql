@@ -5,6 +5,7 @@ CREATE TABLE kreditvermittler
     last_name                     VARCHAR(255) NOT NULL,
     phone_number                  VARCHAR(255) NOT NULL,
     email                         VARCHAR(255) NOT NULL UNIQUE,
+    password                      VARCHAR(255) NOT NULL UNIQUE,
     role                          VARCHAR(255) NOT NULL,
     terms_and_conditions_accepted TINYINT(1)   NOT NULL,
     privacy_policy_accepted       TINYINT(1)   NOT NULL,

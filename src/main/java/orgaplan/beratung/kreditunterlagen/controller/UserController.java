@@ -68,8 +68,8 @@ public class UserController {
 
     @GetMapping("/getUser")
     public ResponseEntity<UserDetail> getUser() {
-        boolean isKreditvermittler = false;
-        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
+        boolean isKreditvermittler = true;
+        String userId = "c1e5e775-25cf-4330-8215-a5c8fb451fd0";
 
         UserDetail userDetail;
         if (isKreditvermittler) {

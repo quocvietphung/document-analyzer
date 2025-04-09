@@ -25,14 +25,3 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
-
-  mail:
-    host: smtp.ionos.de
-    username: ub@orgaplan-beratung.de
-    password: S9ZV2T%wxhy}F+H3
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true

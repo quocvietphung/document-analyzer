@@ -91,7 +91,7 @@ public class UserService {
                 .lastName(request.getLastName())
                 .phoneNumber(request.getPhoneNumber())
                 .email(request.getEmail())
-                .passWord(request.getPassword())
+                .password(request.getPassword())
                 .role(role)
                 .withSecondPartner(false)
                 .isActive(false)

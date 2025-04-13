@@ -1,22 +1,15 @@
 package orgaplan.beratung.kreditunterlagen.controller;
 
-import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import orgaplan.beratung.kreditunterlagen.model.Kreditvermittler;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.request.CreateNewClientRequest;
 import orgaplan.beratung.kreditunterlagen.response.UserDetail;
-import orgaplan.beratung.kreditunterlagen.service.EmailService;
-import orgaplan.beratung.kreditunterlagen.service.KreditvermittlerService;
 import orgaplan.beratung.kreditunterlagen.service.UserService;
-import orgaplan.beratung.kreditunterlagen.util.Util;
 
 import java.math.BigDecimal;
-import java.security.Principal;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +19,6 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private EmailService emailService;
 
     @GetMapping("/test")
     public ResponseEntity<String> sayHello() {

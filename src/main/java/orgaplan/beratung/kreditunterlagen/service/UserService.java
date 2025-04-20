@@ -1,4 +1,5 @@
 package orgaplan.beratung.kreditunterlagen.service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,7 +96,7 @@ public class UserService {
                 .lastName(request.getLastName())
                 .phoneNumber(request.getPhoneNumber())
                 .email(request.getEmail())
-                .password(request.getPassword())
+                .password(new BCryptPasswordEncoder().encode(request.getPassword()))
                 .role(role)
                 .withSecondPartner(false)
                 .isActive(false)

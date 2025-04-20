@@ -21,6 +21,7 @@ public class UserDetail {
     private String lastName;
     private String phoneNumber;
     private String email;
+    private String password;
     private Types.UserRole role;
     private Boolean termsAndConditionsAccepted;
     private Boolean privacyPolicyAccepted;

@@ -26,6 +26,18 @@ public class UserController {
         return ResponseEntity.ok("Hello");
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<Object> login(@RequestParam String email, @RequestParam String password) {
+        User user = userService.findByEmail(email);
+
+        if (user == null || !user.getPassword().equals(password)) {
+            return ResponseEntity.status(401).body("E-Mail oder Passwort ist falsch");
+        }
+
+        UserDetail userDetail = userService.getUserById(user.getId());
+        return ResponseEntity.ok(userDetail);
+    }
+
     @PostMapping("/createNewClient")
     public ResponseEntity<Map<String, Object>> createNewClient(@RequestBody CreateNewClientRequest request) {
         if (userService.existsByEmail(request.getEmail())) {

@@ -22,6 +22,7 @@ public interface UserRepository extends JpaRepository<User, String> {
             "COUNT(CASE WHEN u.forwardedBanks = true THEN 1 END) as clientsForwardedToBank " +
             "FROM User u WHERE u.vermittlerId = :vermittlerId")
     List<Object[]> getClientStatistics(@Param("vermittlerId") String vermittlerId);
+    User findByEmail(String email);
     boolean existsByEmail(String email);
     List<User> findAllByOrderByCreatedAtAsc();
     List<User> findByVermittlerId(String vermittlerId);

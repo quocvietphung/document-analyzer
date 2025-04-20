@@ -47,6 +47,10 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("Benutzer mit ID: " + id + " wurde nicht gefunden"));
     }
 
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     @Transactional(readOnly = true)
     public Kreditvermittler findKreditvermittlerById(String id) {
         return kreditvermittlerRepository.findById(id)
@@ -160,6 +164,7 @@ public class UserService {
                 .lastName(kreditvermittler.getLastName())
                 .phoneNumber(kreditvermittler.getPhoneNumber())
                 .email(kreditvermittler.getEmail())
+                .password(kreditvermittler.getPassword())
                 .role(kreditvermittler.getRole())
                 .privacyPolicyAccepted(kreditvermittler.getPrivacyPolicyAccepted())
                 .termsAndConditionsAccepted(kreditvermittler.getTermsAndConditionsAccepted())
@@ -187,6 +192,7 @@ public class UserService {
                 .lastName(user.getLastName())
                 .phoneNumber(user.getPhoneNumber())
                 .email(user.getEmail())
+                .password(user.getPassword())
                 .role(user.getRole())
                 .isActive(user.getIsActive())
                 .termsAndConditionsAccepted(user.getTermsAndConditionsAccepted())

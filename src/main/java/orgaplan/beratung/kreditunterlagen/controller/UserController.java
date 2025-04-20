@@ -2,6 +2,7 @@ package orgaplan.beratung.kreditunterlagen.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import orgaplan.beratung.kreditunterlagen.model.Kreditvermittler;
 import orgaplan.beratung.kreditunterlagen.model.User;
@@ -30,11 +31,17 @@ public class UserController {
     public ResponseEntity<Object> login(@RequestParam String email, @RequestParam String password) {
         User user = userService.findByEmail(email);
 
-        if (user == null || !user.getPassword().equals(password)) {
+        if (user == null) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (!encoder.matches(password, user.getPassword())) {
             return ResponseEntity.status(401).body("E-Mail oder Passwort ist falsch");
         }
 
         UserDetail userDetail = userService.getUserById(user.getId());
+        userDetail.setPassword(null); // Ẩn password nếu có trong DTO
         return ResponseEntity.ok(userDetail);
     }
 

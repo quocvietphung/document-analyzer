@@ -75,8 +75,9 @@ public class UserController {
     public ResponseEntity<UserDetail> getUser(@RequestParam String userId) {
         Optional<User> optionalUser = userService.findOptionalUserById(userId);
         if (optionalUser.isPresent()) {
-            UserDetail detail = userService.convertUserToUserDetail(optionalUser.get());
-            return ResponseEntity.ok(detail);
+        UserDetail userDetail = userService.getUserById(userId);
+            userDetail.setPassword(null);
+            return ResponseEntity.ok(userDetail);
         }
 
         Optional<Kreditvermittler> optionalVermittler = userService.findOptionalKreditvermittlerById(userId);
@@ -85,7 +86,7 @@ public class UserController {
             return ResponseEntity.ok(detail);
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @PutMapping("/savePercentageUploaded")

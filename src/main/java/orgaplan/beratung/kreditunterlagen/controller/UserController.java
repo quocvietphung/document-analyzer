@@ -1,9 +1,11 @@
 package orgaplan.beratung.kreditunterlagen.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import orgaplan.beratung.kreditunterlagen.Types;
 import orgaplan.beratung.kreditunterlagen.model.Kreditvermittler;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.request.CreateNewClientRequest;
@@ -14,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -28,7 +31,14 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<Object> login(@RequestBody Map<String, String> loginData) {
+        String email = loginData.get("email");
+        String password = loginData.get("password");
+
+        if (email == null || password == null) {
+            return ResponseEntity.badRequest().body("E-Mail und Passwort müssen angegeben werden");
+        }
+
         User user = userService.findByEmail(email);
 
         if (user == null) {
@@ -41,7 +51,7 @@ public class UserController {
         }
 
         UserDetail userDetail = userService.getUserById(user.getId());
-        userDetail.setPassword(null); // Ẩn password nếu có trong DTO
+        userDetail.setPassword(null);
         return ResponseEntity.ok(userDetail);
     }
 
@@ -62,15 +72,20 @@ public class UserController {
     }
 
     @GetMapping("/getUser")
-    public ResponseEntity<UserDetail> getUser(@RequestParam String userId, @RequestParam boolean isKreditvermittler) {
-        UserDetail userDetail;
-        if (isKreditvermittler) {
-            Kreditvermittler kreditvermittler = userService.findKreditvermittlerById(userId);
-            userDetail = userService.convertKreditvermittlerToUserDetail(kreditvermittler);
-        } else {
-            userDetail = userService.getUserById(userId);
+    public ResponseEntity<UserDetail> getUser(@RequestParam String userId) {
+        Optional<User> optionalUser = userService.findOptionalUserById(userId);
+        if (optionalUser.isPresent()) {
+            UserDetail detail = userService.convertUserToUserDetail(optionalUser.get());
+            return ResponseEntity.ok(detail);
         }
-        return ResponseEntity.ok(userDetail);
+
+        Optional<Kreditvermittler> optionalVermittler = userService.findOptionalKreditvermittlerById(userId);
+        if (optionalVermittler.isPresent()) {
+            UserDetail detail = userService.convertKreditvermittlerToUserDetail(optionalVermittler.get());
+            return ResponseEntity.ok(detail);
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @PutMapping("/savePercentageUploaded")

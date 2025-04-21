@@ -1,4 +1,6 @@
 package orgaplan.beratung.kreditunterlagen.service;
+
+import java.util.Optional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +48,11 @@ public class UserService {
     public User findUserById(String id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Benutzer mit ID: " + id + " wurde nicht gefunden"));
+    }
+
+    @Transactional(readOnly = true)
+    public User getRawUserById(String id) {
+        return findUserById(id);
     }
 
     public User findByEmail(String email) {
@@ -253,5 +260,35 @@ public class UserService {
         }
         user.setWithSecondPartner(withSecondPartner);
         userRepository.save(user);
+    }
+    @Transactional(readOnly = true)
+    public Optional<User> findOptionalUserById(String id) {
+        return userRepository.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Kreditvermittler> findOptionalKreditvermittlerById(String id) {
+        return kreditvermittlerRepository.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public UserDetail convertUserToUserDetail(User user) {
+        return UserDetail.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .phoneNumber(user.getPhoneNumber())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .role(user.getRole())
+                .isActive(user.getIsActive())
+                .termsAndConditionsAccepted(user.getTermsAndConditionsAccepted())
+                .privacyPolicyAccepted(user.getPrivacyPolicyAccepted())
+                .usageTermsAccepted(user.getUsageTermsAccepted())
+                .consentTermsAccepted(user.getConsentTermsAccepted())
+                .withSecondPartner(user.getWithSecondPartner())
+                .forwardedBanks(user.getForwardedBanks())
+                .documentProgress(user.getDocumentUploadPercentage())
+                .build();
     }
 }

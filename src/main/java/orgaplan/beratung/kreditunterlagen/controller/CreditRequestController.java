@@ -29,33 +29,29 @@ public class CreditRequestController {
     private KreditvermittlerService kreditvermittlerService;
 
     @PostMapping("/send")
-    public CreditRequestResponse saveCreditRequest(Principal principal,
-                                                   @Validated({ValidationGroups.Create.class, Default.class})
-                                                   @RequestBody CreditRequestForm creditRequestForm) throws Exception {
-        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
+    public CreditRequestResponse saveCreditRequest(
+            @Validated({ValidationGroups.Create.class, Default.class})
+            @RequestBody CreditRequestForm creditRequestForm,
+            @RequestParam String userId) throws Exception {
         return creditRequestService.saveCreditRequest(userId, creditRequestForm);
     }
 
     @PutMapping("/editCreditRequest")
-    public CreditRequestResponse editCreditRequest(Principal principal,
-                                                   @Validated({ValidationGroups.Update.class, Default.class})
-                                                   @RequestBody CreditRequestForm creditRequestForm) throws Exception {
-        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
+    public CreditRequestResponse editCreditRequest(
+            @Validated({ValidationGroups.Update.class, Default.class})
+            @RequestBody CreditRequestForm creditRequestForm,
+            @RequestParam String userId) throws Exception {
         return creditRequestService.updateCreditRequest(userId, creditRequestForm.getId(), creditRequestForm);
     }
 
     @GetMapping("/getCreditRequestsByUser")
-    public ResponseEntity<?> getCreditRequestsByUser(){
-        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
-
+    public ResponseEntity<?> getCreditRequestsByUser(@RequestParam String userId){
         List<CreditRequestResponse> responseList = creditRequestService.getCreditRequestsByUser(userId);
-
         return ResponseEntity.ok(responseList);
     }
 
     @DeleteMapping("/deleteCreditRequest")
-    public ResponseEntity<?> deleteCreditRequestByIdAndUser(Principal principal, @RequestParam String creditRequestId) {
-        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
+    public ResponseEntity<?> deleteCreditRequestByIdAndUser(@RequestParam String creditRequestId, @RequestParam String userId) {
         creditRequestService.deleteCreditRequestByIdAndUser(userId, creditRequestId);
         return ResponseEntity.ok("Credit Request Deleted Successfully");
     }

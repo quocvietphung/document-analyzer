@@ -49,9 +49,9 @@ public class DocumentController {
 
     @PostMapping("/upload")
     public ResponseEntity<Object> uploadDocument(@RequestParam("file") MultipartFile file,
-                                                 @RequestParam("type") String documentType) throws Exception {
+                                                 @RequestParam("type") String documentType,
+                                                 @RequestParam String userId) throws Exception {
 
-        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
         User user = userService.findUserById(userId);
         documentValidation.validateDocumentTypeForUserRole(documentType, user);
         Document document = documentService.save(file, documentType, user);
@@ -64,16 +64,15 @@ public class DocumentController {
     }
 
     @GetMapping("/getUserDocuments")
-    public DocumentResponse getUserDocuments() {
-        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
+    public DocumentResponse getUserDocuments(@RequestParam String userId) {
         return documentService.getUserDocumentsByUserId(userId);
     }
 
     @GetMapping("/view")
     public ResponseEntity<?> viewDocument(@RequestParam String documentId,
-                                          @RequestParam(required = false) String userId,
+                                          @RequestParam String userId,
                                           HttpServletRequest request) {
-        String currentUserId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
+        String currentUserId = userId;
         boolean isKreditvermittler = false;
 
         Optional<Document> documentOptional;
@@ -117,8 +116,8 @@ public class DocumentController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteDocument(@RequestParam String documentId) {
-        String userId = "e33449f9-e4fb-4c06-a1fb-3ebf1e426bac";
+    public ResponseEntity<String> deleteDocument(@RequestParam String documentId,
+                                                 @RequestParam String userId) {
         boolean deleted = documentService.deleteDocument(documentId, userId);
         if (deleted) {
             return ResponseEntity.ok().body("Document deleted successfully");

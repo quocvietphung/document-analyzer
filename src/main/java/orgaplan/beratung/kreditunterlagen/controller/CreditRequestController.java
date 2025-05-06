@@ -40,7 +40,7 @@ public class CreditRequestController {
     public CreditRequestResponse editCreditRequest(
             @Validated({ValidationGroups.Update.class, Default.class})
             @RequestBody CreditRequestForm creditRequestForm,
-            @RequestParam String userId) throws Exception {
+            @RequestParam String userId)  {
         return creditRequestService.updateCreditRequest(userId, creditRequestForm.getId(), creditRequestForm);
     }
 

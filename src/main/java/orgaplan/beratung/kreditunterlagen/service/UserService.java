@@ -8,11 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import orgaplan.beratung.kreditunterlagen.Types;
+import orgaplan.beratung.kreditunterlagen.enums.UserRole;
 import orgaplan.beratung.kreditunterlagen.model.Company;
 import orgaplan.beratung.kreditunterlagen.model.Kreditvermittler;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.repository.*;
 import orgaplan.beratung.kreditunterlagen.request.CreateNewClientRequest;
+import orgaplan.beratung.kreditunterlagen.request.CreateUserRequest;
 import orgaplan.beratung.kreditunterlagen.response.UserDetail;
 import orgaplan.beratung.kreditunterlagen.util.Util;
 import orgaplan.beratung.kreditunterlagen.validation.UserRoleValidation;
@@ -86,25 +88,35 @@ public class UserService {
         }
     }
 
-    public User createNewClient(CreateNewClientRequest request) {
-        UserRoleValidation.validateRole(request.getRole());
-        Types.UserRole role = Types.UserRole.valueOf(request.getRole());
+    public User createUser(CreateUserRequest request) {
+        UserRoleValidation.validateRole(request.getRole()); // kiểm tra hợp lệ
 
-        if (Types.UserRole.FIRMEN_KUNDE == role) {
-            validateCompanyFields(request);
+        UserRole role = UserRole.valueOf(request.getRole());
+
+        // Đảm bảo chỉ có 1 SUPER_ADMIN
+        if (role == UserRole.SUPER_ADMIN && userRepository.existsByRole(UserRole.SUPER_ADMIN)) {
+            throw new IllegalStateException("Nur ein SUPER_ADMIN ist erlaubt.");
         }
 
-        String responseUUID = UUID.randomUUID().toString();
+        // Nếu là USER, phải có assigned_by_admin_id
+        User assignedBy = null;
+        if (role == UserRole.USER) {
+            if (request.getAssignedByAdminId() == null) {
+                throw new IllegalArgumentException("USER muss von einem ADMIN zugewiesen werden.");
+            }
+            assignedBy = userRepository.findById(request.getAssignedByAdminId())
+                    .orElseThrow(() -> new IllegalArgumentException("Zugewiesener ADMIN nicht gefunden"));
+        }
 
         User user = User.builder()
-                .id(responseUUID)
-                .vermittlerId(request.getVermittlerId())
+                .id(UUID.randomUUID().toString())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .phoneNumber(request.getPhoneNumber())
                 .email(request.getEmail())
                 .password(new BCryptPasswordEncoder().encode(request.getPassword()))
                 .role(role)
+                .assignedByAdmin(assignedBy)
                 .withSecondPartner(false)
                 .isActive(false)
                 .documentUploadPercentage(BigDecimal.ZERO)
@@ -117,47 +129,7 @@ public class UserService {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        validateRequiredFields(user);
-
-        User savedUser = userRepository.save(user);
-
-        if (Types.UserRole.FIRMEN_KUNDE == role) {
-            if (companyRepository.existsByUserId(responseUUID)) {
-                throw new IllegalStateException("Ein Unternehmen, das mit dieser Benutzer-ID verknüpft ist, existiert bereits.");
-            }
-
-            String location = coordinatesService.fetchCoordinates(
-                    request.getStreetNumber(),
-                    request.getPostalCode(),
-                    request.getCity(),
-                    request.getCountry()
-            );
-
-            Company company = Company.builder()
-                    .user(savedUser)
-                    .isSelfEmployed(request.getIsSelfEmployed())
-                    .companyName(request.getCompanyName())
-                    .streetNumber(request.getStreetNumber())
-                    .postalCode(request.getPostalCode())
-                    .city(request.getCity())
-                    .country(request.getCountry())
-                    .location(location)
-                    .industry(request.getIndustry())
-                    .numberOfEmployees(request.getNumberOfEmployees())
-                    .ceo(request.getCeo())
-                    .court(request.getCourt())
-                    .commercialRegisterNumber(request.getCommercialRegisterNumber())
-                    .vatId(request.getVatId())
-                    .companyEmail(request.getCompanyEmail())
-                    .phone(request.getPhone())
-                    .fax(request.getFax())
-                    .website(request.getWebsite())
-                    .build();
-
-            companyRepository.save(company);
-        }
-
-        return savedUser;
+        return userRepository.save(user);
     }
 
     @Transactional(readOnly = true)

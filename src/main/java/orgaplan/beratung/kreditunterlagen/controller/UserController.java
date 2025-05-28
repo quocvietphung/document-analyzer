@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import orgaplan.beratung.kreditunterlagen.Types;
 import orgaplan.beratung.kreditunterlagen.model.Kreditvermittler;
 import orgaplan.beratung.kreditunterlagen.model.User;
-import orgaplan.beratung.kreditunterlagen.request.CreateNewClientRequest;
+import orgaplan.beratung.kreditunterlagen.request.CreateUserRequest;
 import orgaplan.beratung.kreditunterlagen.response.UserDetail;
 import orgaplan.beratung.kreditunterlagen.service.UserService;
 
@@ -55,14 +55,14 @@ public class UserController {
         return ResponseEntity.ok(userDetail);
     }
 
-    @PostMapping("/createNewClient")
-    public ResponseEntity<Map<String, Object>> createNewClient(@RequestBody CreateNewClientRequest request) {
+    @PostMapping("/createUser")
+    public ResponseEntity<Map<String, Object>> createUser(@RequestBody CreateUserRequest request) {
         if (userService.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Ein Benutzer mit dieser E-Mail existiert bereits");
         }
-        User newClient = userService.createNewClient(request);
+        User user = userService.createUser(request);
         Map<String, Object> response = new HashMap<>();
-        response.put("user", newClient);
+        response.put("user", user);
         return ResponseEntity.ok(response);
     }
 

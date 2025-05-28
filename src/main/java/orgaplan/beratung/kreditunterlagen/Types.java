@@ -19,26 +19,6 @@ public class Types {
         COMPLETED
     }
 
-    public enum UserRole {
-        PRIVAT_KUNDE,
-        FIRMEN_KUNDE,
-        KREDIT_VERMITTLER,
-        ;
-
-        @Override
-        public String toString() {
-            if (this == PRIVAT_KUNDE) {
-                return "privat_kunde";
-            } else if (this == FIRMEN_KUNDE) {
-                return "firmen_kunde";
-            } else if (this == KREDIT_VERMITTLER) {
-                return "kreditvermittler";
-            }
-
-            throw new IllegalArgumentException("Unknown user role");
-        }
-    }
-
     public enum DocumentType {
         GEHALTSABRECHNUNG,
         GEHALTSABRECHNUNG_VON_EHEPARTNER,

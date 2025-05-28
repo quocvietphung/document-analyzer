@@ -1,12 +1,12 @@
 package orgaplan.beratung.kreditunterlagen.model;
 
-import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import orgaplan.beratung.kreditunterlagen.enums.UserRole;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-import lombok.*;
-import orgaplan.beratung.kreditunterlagen.Types.UserRole;
 
 @Entity
 @Table(name = "users")
@@ -15,13 +15,10 @@ import orgaplan.beratung.kreditunterlagen.Types.UserRole;
 @AllArgsConstructor
 @Builder
 public class User {
+
     @Id
     @Column(name = "id", length = 36)
     private String id;
-
-    @NotNull
-    @Column(name = "vermittler_id", length = 36, nullable = false)
-    private String vermittlerId;
 
     @NotNull
     @Column(name = "first_name", nullable = false)
@@ -48,9 +45,15 @@ public class User {
     @Column(name = "role", nullable = false)
     private UserRole role;
 
-    @Column(name = "with_second_partner")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_by_admin_id")
+    private User assignedByAdmin;
+
+    @NotNull
+    @Column(name = "with_second_partner", nullable = false)
     private Boolean withSecondPartner;
 
+    @NotNull
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 

@@ -1,13 +1,13 @@
 CREATE TABLE users
 (
     id                            CHAR(36)      NOT NULL PRIMARY KEY,
-    vermittler_id                 CHAR(36)      NOT NULL,
     first_name                    VARCHAR(255)  NOT NULL,
     last_name                     VARCHAR(255)  NOT NULL,
     phone_number                  VARCHAR(255)  NOT NULL,
     email                         VARCHAR(255)  NOT NULL UNIQUE,
     password                      VARCHAR(255)  NOT NULL UNIQUE,
-    role                          VARCHAR(255)  NOT NULL,
+    role                          VARCHAR(50)   NOT NULL,
+    assigned_by_admin_id          CHAR(36),
     with_second_partner           TINYINT(1)    NOT NULL,
     is_active                     TINYINT(1)    NOT NULL,
     document_upload_percentage    DECIMAL(5, 1) NOT NULL,
@@ -19,5 +19,5 @@ CREATE TABLE users
     consent_terms_accepted        TINYINT(1)    NOT NULL,
     created_at                    TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at                    TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (vermittler_id) REFERENCES kreditvermittler (id)
+    FOREIGN KEY (assigned_by_admin_id) REFERENCES users (id)
 );

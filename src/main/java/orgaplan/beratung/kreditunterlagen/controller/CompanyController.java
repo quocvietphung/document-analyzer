@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import orgaplan.beratung.kreditunterlagen.model.Company;
-import orgaplan.beratung.kreditunterlagen.service.CompanyService;
 
 @RestController
 @RequestMapping("/api/companies")

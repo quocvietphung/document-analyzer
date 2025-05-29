@@ -38,9 +38,6 @@ public class DocumentController {
     private UserService userService;
 
     @Autowired
-    private KreditvermittlerService kreditvermittlerService;
-
-    @Autowired
     private DocumentValidation documentValidation;
 
     @Autowired
@@ -72,16 +69,7 @@ public class DocumentController {
                                           @RequestParam String userId,
                                           HttpServletRequest request) {
         String currentUserId = userId;
-        boolean isKreditvermittler = false;
-
-        Optional<Document> documentOptional;
-
-        if (isKreditvermittler && userId != null) {
-            kreditvermittlerService.findUserByVermittler(currentUserId, userId);
-            documentOptional = documentRepository.findByIdAndUserId(documentId, userId);
-        } else {
-            documentOptional = documentRepository.findByIdAndUserId(documentId, currentUserId);
-        }
+        Optional<Document> documentOptional = documentRepository.findByIdAndUserId(documentId, currentUserId);
 
         if (!documentOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Sie haben keine Berechtigung, dieses Dokument anzuzeigen oder das Dokument existiert nicht");

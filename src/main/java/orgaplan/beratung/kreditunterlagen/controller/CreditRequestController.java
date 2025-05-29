@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import orgaplan.beratung.kreditunterlagen.request.CreditRequestForm;
-import orgaplan.beratung.kreditunterlagen.response.CreditRequestResponse;
-import orgaplan.beratung.kreditunterlagen.service.CreditRequestService;
 import orgaplan.beratung.kreditunterlagen.validation.ValidationGroups;
 
 import java.util.List;

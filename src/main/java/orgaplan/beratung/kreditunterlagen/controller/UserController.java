@@ -19,12 +19,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/test")
-    public ResponseEntity<String> sayHello() {
-        System.out.println("authentication");
-        return ResponseEntity.ok("Hello");
-    }
-
     @PostMapping("/createUser")
     public ResponseEntity<Map<String, Object>> createUser(@RequestBody CreateUserRequest request) {
         if (userService.existsByEmail(request.getEmail())) {

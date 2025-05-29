@@ -28,34 +28,10 @@ public class UserService {
     @Autowired
     private KreditvermittlerRepository kreditvermittlerRepository;
 
-    @Autowired
-    private WebClient webClient;
-
-    @Autowired
-    private CreditRequestRepository creditRequestRepository;
-
-    @Autowired
-    private CoordinatesService coordinatesService;
-
     @Transactional(readOnly = true)
     public User findUserById(String id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Benutzer mit ID: " + id + " wurde nicht gefunden"));
-    }
-
-    @Transactional(readOnly = true)
-    public User getRawUserById(String id) {
-        return findUserById(id);
-    }
-
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    @Transactional(readOnly = true)
-    public Kreditvermittler findKreditvermittlerById(String id) {
-        return kreditvermittlerRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Kreditvermittler mit ID: " + id + " wurde nicht gefunden"));
     }
 
     public boolean existsByEmail(String email) {

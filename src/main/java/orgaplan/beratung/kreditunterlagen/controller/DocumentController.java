@@ -10,7 +10,6 @@ import orgaplan.beratung.kreditunterlagen.request.FileDownloadRequest;
 import orgaplan.beratung.kreditunterlagen.response.DocumentResponse;
 import orgaplan.beratung.kreditunterlagen.service.DocumentService;
 import orgaplan.beratung.kreditunterlagen.service.UserService;
-import orgaplan.beratung.kreditunterlagen.validation.DocumentValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -38,9 +37,6 @@ public class DocumentController {
     private UserService userService;
 
     @Autowired
-    private DocumentValidation documentValidation;
-
-    @Autowired
     private DocumentRepository documentRepository;
 
     @PostMapping("/upload")
@@ -49,7 +45,6 @@ public class DocumentController {
                                                  @RequestParam String userId) throws Exception {
 
         User user = userService.findUserById(userId);
-        documentValidation.validateDocumentTypeForUserRole(documentType, user);
         Document document = documentService.save(file, documentType, user);
 
         Map<String, Object> response = new HashMap<>();

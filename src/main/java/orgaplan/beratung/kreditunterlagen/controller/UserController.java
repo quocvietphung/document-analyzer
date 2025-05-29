@@ -1,15 +1,10 @@
 package orgaplan.beratung.kreditunterlagen.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import orgaplan.beratung.kreditunterlagen.Types;
-import orgaplan.beratung.kreditunterlagen.model.Kreditvermittler;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.request.CreateUserRequest;
-import orgaplan.beratung.kreditunterlagen.response.UserDetail;
 import orgaplan.beratung.kreditunterlagen.service.UserService;
 
 import java.math.BigDecimal;
@@ -48,34 +43,10 @@ public class UserController {
         return userService.getUsers();
     }
 
-    @GetMapping("/getUser")
-    public ResponseEntity<UserDetail> getUser(@RequestParam String userId) {
-        Optional<User> optionalUser = userService.findOptionalUserById(userId);
-        if (optionalUser.isPresent()) {
-        UserDetail userDetail = userService.getUserById(userId);
-            userDetail.setPassword(null);
-            return ResponseEntity.ok(userDetail);
-        }
-
-        Optional<Kreditvermittler> optionalVermittler = userService.findOptionalKreditvermittlerById(userId);
-        if (optionalVermittler.isPresent()) {
-            UserDetail detail = userService.convertKreditvermittlerToUserDetail(optionalVermittler.get());
-            return ResponseEntity.ok(detail);
-        }
-
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
-
     @PutMapping("/savePercentageUploaded")
     public ResponseEntity<Object> savePercentageUploaded(@RequestParam String userId, @RequestParam BigDecimal percentageUploaded) {
         userService.updateUploadPercentage(userId, percentageUploaded);
         return ResponseEntity.ok().body("Percentage updated successfully");
-    }
-
-    @PutMapping("/activeSecondPartner")
-    public ResponseEntity<Object> activeSecondPartner(@RequestParam String userId, @RequestParam boolean activeSecondPartner) {
-        userService.updateSecondPartner(userId, activeSecondPartner);
-        return ResponseEntity.ok().body("Zweiter Partner erfolgreich aktualisiert");
     }
 
     @PutMapping("/editUser")

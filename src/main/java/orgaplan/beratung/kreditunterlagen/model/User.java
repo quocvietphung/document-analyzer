@@ -50,23 +50,12 @@ public class User {
     private User assignedByAdmin;
 
     @NotNull
-    @Column(name = "with_second_partner", nullable = false)
-    private Boolean withSecondPartner;
-
-    @NotNull
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
     @NotNull
     @Column(name = "document_upload_percentage", precision = 5, scale = 1, nullable = false)
     private BigDecimal documentUploadPercentage;
-
-    @NotNull
-    @Column(name = "forwarded_banks", nullable = false)
-    private Boolean forwardedBanks;
-
-    @Column(name = "forwarded_banks_at")
-    private LocalDateTime forwardedBanksAt;
 
     @NotNull
     @Column(name = "terms_and_conditions_accepted", nullable = false)

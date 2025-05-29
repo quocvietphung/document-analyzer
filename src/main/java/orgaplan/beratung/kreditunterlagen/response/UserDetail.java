@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import orgaplan.beratung.kreditunterlagen.Types;
-import orgaplan.beratung.kreditunterlagen.model.Kreditvermittler;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

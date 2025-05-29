@@ -10,10 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import orgaplan.beratung.kreditunterlagen.request.CreditRequestForm;
 import orgaplan.beratung.kreditunterlagen.response.CreditRequestResponse;
 import orgaplan.beratung.kreditunterlagen.service.CreditRequestService;
-import orgaplan.beratung.kreditunterlagen.service.KreditvermittlerService;
 import orgaplan.beratung.kreditunterlagen.validation.ValidationGroups;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController

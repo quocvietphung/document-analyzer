@@ -1,13 +1,11 @@
 package orgaplan.beratung.kreditunterlagen.service;
 
-import java.util.Optional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import orgaplan.beratung.kreditunterlagen.enums.UserRole;
-import orgaplan.beratung.kreditunterlagen.model.Kreditvermittler;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.repository.*;
 import orgaplan.beratung.kreditunterlagen.request.CreateUserRequest;

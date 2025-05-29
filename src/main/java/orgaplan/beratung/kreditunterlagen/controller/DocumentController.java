@@ -9,7 +9,6 @@ import orgaplan.beratung.kreditunterlagen.repository.DocumentRepository;
 import orgaplan.beratung.kreditunterlagen.request.FileDownloadRequest;
 import orgaplan.beratung.kreditunterlagen.response.DocumentResponse;
 import orgaplan.beratung.kreditunterlagen.service.DocumentService;
-import orgaplan.beratung.kreditunterlagen.service.KreditvermittlerService;
 import orgaplan.beratung.kreditunterlagen.service.UserService;
 import orgaplan.beratung.kreditunterlagen.validation.DocumentValidation;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -7,22 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import orgaplan.beratung.kreditunterlagen.Types;
 import orgaplan.beratung.kreditunterlagen.enums.UserRole;
-import orgaplan.beratung.kreditunterlagen.model.Company;
 import orgaplan.beratung.kreditunterlagen.model.Kreditvermittler;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.repository.*;
-import orgaplan.beratung.kreditunterlagen.request.CreateNewClientRequest;
 import orgaplan.beratung.kreditunterlagen.request.CreateUserRequest;
-import orgaplan.beratung.kreditunterlagen.response.UserDetail;
-import orgaplan.beratung.kreditunterlagen.util.Util;
 import orgaplan.beratung.kreditunterlagen.validation.UserRoleValidation;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -33,9 +27,6 @@ public class UserService {
 
     @Autowired
     private KreditvermittlerRepository kreditvermittlerRepository;
-
-    @Autowired
-    private CompanyRepository companyRepository;
 
     @Autowired
     private WebClient webClient;
@@ -57,7 +48,7 @@ public class UserService {
         return findUserById(id);
     }
 
-    public User findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
@@ -71,41 +62,13 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
-    private void validateRequiredFields(User user) {
-        if (user.getFirstName() == null || user.getLastName() == null || user.getEmail() == null
-                || user.getPhoneNumber() == null || user.getRole() == null) {
-            throw new IllegalArgumentException("Fehlende erforderliche Felder oder nicht akzeptierte Richtlinien");
-        }
-    }
-
-    private void validateCompanyFields(CreateNewClientRequest request) {
-        if (request.getCompanyName() == null || request.getCompanyName().trim().isEmpty()
-                || request.getStreetNumber() == null || request.getStreetNumber().trim().isEmpty()
-                || request.getPostalCode() == null || request.getPostalCode().trim().isEmpty()
-                || request.getCity() == null || request.getCity().trim().isEmpty()
-                || request.getCountry() == null || request.getCountry().trim().isEmpty()) {
-            throw new IllegalArgumentException("Fehlende erforderliche Unternehmensfelder");
-        }
-    }
-
     public User createUser(CreateUserRequest request) {
-        UserRoleValidation.validateRole(request.getRole()); // kiểm tra hợp lệ
+        UserRoleValidation.validateRole(request.getRole());
 
         UserRole role = UserRole.valueOf(request.getRole());
 
-        // Đảm bảo chỉ có 1 SUPER_ADMIN
         if (role == UserRole.SUPER_ADMIN && userRepository.existsByRole(UserRole.SUPER_ADMIN)) {
             throw new IllegalStateException("Nur ein SUPER_ADMIN ist erlaubt.");
-        }
-
-        // Nếu là USER, phải có assigned_by_admin_id
-        User assignedBy = null;
-        if (role == UserRole.USER) {
-            if (request.getAssignedByAdminId() == null) {
-                throw new IllegalArgumentException("USER muss von einem ADMIN zugewiesen werden.");
-            }
-            assignedBy = userRepository.findById(request.getAssignedByAdminId())
-                    .orElseThrow(() -> new IllegalArgumentException("Zugewiesener ADMIN nicht gefunden"));
         }
 
         User user = User.builder()
@@ -116,11 +79,8 @@ public class UserService {
                 .email(request.getEmail())
                 .password(new BCryptPasswordEncoder().encode(request.getPassword()))
                 .role(role)
-                .assignedByAdmin(assignedBy)
-                .withSecondPartner(false)
                 .isActive(false)
                 .documentUploadPercentage(BigDecimal.ZERO)
-                .forwardedBanks(false)
                 .termsAndConditionsAccepted(request.getTermsAndConditionsAccepted())
                 .privacyPolicyAccepted(request.getPrivacyPolicyAccepted())
                 .usageTermsAccepted(request.getUsageTermsAccepted())
@@ -135,57 +95,6 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<User> getUsers() {
         return userRepository.findAllByOrderByCreatedAtAsc();
-    }
-
-    public UserDetail convertKreditvermittlerToUserDetail(Kreditvermittler kreditvermittler) {
-        return UserDetail.builder()
-                .id(kreditvermittler.getId())
-                .firstName(kreditvermittler.getFirstName())
-                .lastName(kreditvermittler.getLastName())
-                .phoneNumber(kreditvermittler.getPhoneNumber())
-                .email(kreditvermittler.getEmail())
-                .password(kreditvermittler.getPassword())
-                .role(kreditvermittler.getRole())
-                .privacyPolicyAccepted(kreditvermittler.getPrivacyPolicyAccepted())
-                .termsAndConditionsAccepted(kreditvermittler.getTermsAndConditionsAccepted())
-                .usageTermsAccepted(kreditvermittler.getUsageTermsAccepted())
-                .consentTermsAccepted(kreditvermittler.getConsentTermsAccepted())
-                .logo(kreditvermittler.getLogo())
-                .profileImage(kreditvermittler.getProfileImage())
-                .build();
-    }
-
-    @Transactional
-    public UserDetail getUserById(String userId) {
-        User user = findUserById(userId);
-        System.out.println("User: " + user);
-        Kreditvermittler vermittler = null;
-        if (user.getVermittlerId() != null && !user.getVermittlerId().isEmpty()) {
-            vermittler = findKreditvermittlerById(user.getVermittlerId());
-        }
-
-        Long creditRequestCount = creditRequestRepository.countByUserId(userId);
-        boolean hasKreditanfrage = creditRequestCount > 0;
-        return UserDetail.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .phoneNumber(user.getPhoneNumber())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .role(user.getRole())
-                .isActive(user.getIsActive())
-                .termsAndConditionsAccepted(user.getTermsAndConditionsAccepted())
-                .privacyPolicyAccepted(user.getPrivacyPolicyAccepted())
-                .usageTermsAccepted(user.getUsageTermsAccepted())
-                .consentTermsAccepted(user.getConsentTermsAccepted())
-                .withSecondPartner(user.getWithSecondPartner())
-                .hasKreditanfrage(hasKreditanfrage)
-                .forwardedBanks(user.getForwardedBanks())
-                .forwardedBanksAt(user.getForwardedBanksAt())
-                .documentProgress(user.getDocumentUploadPercentage())
-                .vermittler(vermittler)
-                .build();
     }
 
     @Transactional
@@ -225,14 +134,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void updateSecondPartner(String userId, Boolean withSecondPartner) {
-        User user = findUserById(userId);
-        if (user.getForwardedBanks()) {
-            throw new RuntimeException("Die Weiterleitung zu den Banken wurde aktiviert, daher können Sie die Information zum zweiten Partner nicht aktualisieren.");
-        }
-        user.setWithSecondPartner(withSecondPartner);
-        userRepository.save(user);
-    }
     @Transactional(readOnly = true)
     public Optional<User> findOptionalUserById(String id) {
         return userRepository.findById(id);
@@ -243,24 +144,4 @@ public class UserService {
         return kreditvermittlerRepository.findById(id);
     }
 
-    @Transactional(readOnly = true)
-    public UserDetail convertUserToUserDetail(User user) {
-        return UserDetail.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .phoneNumber(user.getPhoneNumber())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .role(user.getRole())
-                .isActive(user.getIsActive())
-                .termsAndConditionsAccepted(user.getTermsAndConditionsAccepted())
-                .privacyPolicyAccepted(user.getPrivacyPolicyAccepted())
-                .usageTermsAccepted(user.getUsageTermsAccepted())
-                .consentTermsAccepted(user.getConsentTermsAccepted())
-                .withSecondPartner(user.getWithSecondPartner())
-                .forwardedBanks(user.getForwardedBanks())
-                .documentProgress(user.getDocumentUploadPercentage())
-                .build();
-    }
 }

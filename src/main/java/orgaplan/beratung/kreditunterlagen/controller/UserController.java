@@ -30,37 +30,14 @@ public class UserController {
         return ResponseEntity.ok("Hello");
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody Map<String, String> loginData) {
-        String email = loginData.get("email");
-        String password = loginData.get("password");
-
-        if (email == null || password == null) {
-            return ResponseEntity.badRequest().body("E-Mail und Passwort müssen angegeben werden");
-        }
-
-        User user = userService.findByEmail(email);
-
-        if (user == null) {
-            return ResponseEntity.status(404).body("User not found");
-        }
-
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        if (!encoder.matches(password, user.getPassword())) {
-            return ResponseEntity.status(401).body("E-Mail oder Passwort ist falsch");
-        }
-
-        UserDetail userDetail = userService.getUserById(user.getId());
-        userDetail.setPassword(null);
-        return ResponseEntity.ok(userDetail);
-    }
-
     @PostMapping("/createUser")
     public ResponseEntity<Map<String, Object>> createUser(@RequestBody CreateUserRequest request) {
         if (userService.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Ein Benutzer mit dieser E-Mail existiert bereits");
         }
+
         User user = userService.createUser(request);
+
         Map<String, Object> response = new HashMap<>();
         response.put("user", user);
         return ResponseEntity.ok(response);

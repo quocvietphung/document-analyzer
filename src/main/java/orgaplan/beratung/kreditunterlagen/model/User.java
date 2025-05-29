@@ -45,10 +45,6 @@ public class User {
     @Column(name = "role", nullable = false)
     private UserRole role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assigned_by_admin_id")
-    private User assignedByAdmin;
-
     @NotNull
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;

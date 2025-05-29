@@ -7,7 +7,6 @@ CREATE TABLE users
     email                         VARCHAR(255)  NOT NULL UNIQUE,
     password                      VARCHAR(255)  NOT NULL UNIQUE,
     role                          VARCHAR(50)   NOT NULL,
-    assigned_by_admin_id          CHAR(36),
     is_active                     TINYINT(1)    NOT NULL,
     document_upload_percentage    DECIMAL(5, 1) NOT NULL,
     terms_and_conditions_accepted TINYINT(1)    NOT NULL,
@@ -15,6 +14,5 @@ CREATE TABLE users
     usage_terms_accepted          TINYINT(1)    NOT NULL,
     consent_terms_accepted        TINYINT(1)    NOT NULL,
     created_at                    TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at                    TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (assigned_by_admin_id) REFERENCES users (id)
+    updated_at                    TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

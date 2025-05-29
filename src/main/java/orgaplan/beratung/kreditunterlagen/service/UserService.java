@@ -6,7 +6,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 import orgaplan.beratung.kreditunterlagen.enums.UserRole;
 import orgaplan.beratung.kreditunterlagen.model.Kreditvermittler;
 import orgaplan.beratung.kreditunterlagen.model.User;
@@ -108,11 +107,6 @@ public class UserService {
         User user = findUserById(userId);
         user.setDocumentUploadPercentage(percentageUploaded);
         userRepository.save(user);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<User> findOptionalUserById(String id) {
-        return userRepository.findById(id);
     }
 
     @Transactional(readOnly = true)

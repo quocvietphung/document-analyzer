@@ -1,5 +1,6 @@
 package orgaplan.beratung.kreditunterlagen.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -20,7 +20,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/createUser")
-    public ResponseEntity<Map<String, Object>> createUser(@RequestBody CreateUserRequest request) {
+    public ResponseEntity<Map<String, Object>> createUser(@Valid @RequestBody CreateUserRequest request) {
         if (userService.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Ein Benutzer mit dieser E-Mail existiert bereits");
         }

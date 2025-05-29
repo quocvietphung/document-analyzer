@@ -13,7 +13,6 @@ public class CreateUserRequest {
     private String email;
     private String password;
     private String role;
-    private String assignedByAdminId;
     private Boolean termsAndConditionsAccepted;
     private Boolean privacyPolicyAccepted;
     private Boolean usageTermsAccepted;

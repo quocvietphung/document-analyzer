@@ -24,9 +24,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private KreditvermittlerRepository kreditvermittlerRepository;
-
     @Transactional(readOnly = true)
     public User findUserById(String id) {
         return userRepository.findById(id)
@@ -108,10 +105,4 @@ public class UserService {
         user.setDocumentUploadPercentage(percentageUploaded);
         userRepository.save(user);
     }
-
-    @Transactional(readOnly = true)
-    public Optional<Kreditvermittler> findOptionalKreditvermittlerById(String id) {
-        return kreditvermittlerRepository.findById(id);
-    }
-
 }

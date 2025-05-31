@@ -12,7 +12,5 @@ import java.util.Optional;
 public interface DocumentRepository extends JpaRepository<Document, String> {
     List<Document> findByUserId(String userId);
     Optional<Document> findByIdAndUserId(String documentId, String userId);
-    List<Document> findByUserIdAndDocumentType(String userId, Types.DocumentType documentType);
-    void deleteByUserId(String userId);
 }
 

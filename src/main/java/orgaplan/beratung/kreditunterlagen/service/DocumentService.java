@@ -1,6 +1,5 @@
 package orgaplan.beratung.kreditunterlagen.service;
 
-import orgaplan.beratung.kreditunterlagen.model.Company;
 import orgaplan.beratung.kreditunterlagen.model.Document;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.repository.DocumentRepository;

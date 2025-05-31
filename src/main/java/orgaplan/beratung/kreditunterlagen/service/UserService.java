@@ -67,37 +67,6 @@ public class UserService {
         return userRepository.findAllByOrderByCreatedAtAsc();
     }
 
-    @Transactional
-    public User editUser(String userId, User updatedUserFields) {
-        if (userId == null || userId.isEmpty()) {
-            throw new IllegalArgumentException("Benutzer-ID fehlt oder ist ungültig");
-        }
-
-        if (updatedUserFields.getId() != null && !userId.equals(updatedUserFields.getId())) {
-            throw new IllegalArgumentException("Benutzer-ID im Pfad stimmt nicht mit der ID im Anforderungstext überein");
-        }
-
-        User user = findUserById(userId);
-
-        updateFields(user, updatedUserFields);
-
-        return userRepository.save(user);
-    }
-
-    private void updateFields(User user, User updatedUserFields) {
-        user.setFirstName(updatedUserFields.getFirstName() != null ? updatedUserFields.getFirstName() : user.getFirstName());
-        user.setLastName(updatedUserFields.getLastName() != null ? updatedUserFields.getLastName() : user.getLastName());
-        user.setEmail(updatedUserFields.getEmail() != null ? updatedUserFields.getEmail() : user.getEmail());
-        user.setPhoneNumber(updatedUserFields.getPhoneNumber() != null ? updatedUserFields.getPhoneNumber() : user.getPhoneNumber());
-        user.setRole(updatedUserFields.getRole() != null ? updatedUserFields.getRole() : user.getRole());
-        user.setIsActive(updatedUserFields.getIsActive() != null ? updatedUserFields.getIsActive() : user.getIsActive());
-        user.setTermsAndConditionsAccepted(updatedUserFields.getTermsAndConditionsAccepted() != null ? updatedUserFields.getTermsAndConditionsAccepted() : user.getTermsAndConditionsAccepted());
-        user.setPrivacyPolicyAccepted(updatedUserFields.getPrivacyPolicyAccepted() != null ? updatedUserFields.getPrivacyPolicyAccepted() : user.getPrivacyPolicyAccepted());
-        user.setUsageTermsAccepted(updatedUserFields.getUsageTermsAccepted() != null ? updatedUserFields.getUsageTermsAccepted() : user.getUsageTermsAccepted());
-        user.setConsentTermsAccepted(updatedUserFields.getConsentTermsAccepted() != null ? updatedUserFields.getConsentTermsAccepted() : user.getConsentTermsAccepted());
-        user.setUpdatedAt(LocalDateTime.now());
-    }
-
     public void updateUploadPercentage(String userId, BigDecimal percentageUploaded) {
         User user = findUserById(userId);
         user.setDocumentUploadPercentage(percentageUploaded);

@@ -42,10 +42,4 @@ public class UserController {
         userService.updateUploadPercentage(userId, percentageUploaded);
         return ResponseEntity.ok().body("Percentage updated successfully");
     }
-
-    @PutMapping("/editUser")
-    public ResponseEntity<User> editUser(@RequestParam String userId, @RequestBody User updatedUserFields) {
-        User updatedUser = userService.editUser(userId, updatedUserFields);
-        return ResponseEntity.ok(updatedUser);
-    }
 }

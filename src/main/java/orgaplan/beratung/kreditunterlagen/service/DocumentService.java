@@ -11,6 +11,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import orgaplan.beratung.kreditunterlagen.Types;
+import orgaplan.beratung.kreditunterlagen.enums.DocumentType;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -55,7 +56,7 @@ public class DocumentService {
     }
 
     public Document save(MultipartFile file, String documentType, User user) throws IOException {
-        Types.DocumentType docType = Types.DocumentType.valueOf(documentType);
+        DocumentType docType = DocumentType.valueOf(documentType);
         Document document = new Document();
         document.setDocumentType(docType);
         document.setUser(user);
@@ -113,7 +114,7 @@ public class DocumentService {
 
         List<String> mainUserDocumentTypes = new ArrayList<>();
         List<String> spouseDocumentTypes = new ArrayList<>();
-        List<String> optionDocumentsTypes = Arrays.asList(Types.DocumentType.SONSTIGE_DOKUMENTE.name());
+        List<String> optionDocumentsTypes = Arrays.asList(DocumentType.SONSTIGE_DOKUMENTE.name());
 
         Boolean isSelfEmployed = null;
 

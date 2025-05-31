@@ -1,13 +1,12 @@
 package orgaplan.beratung.kreditunterlagen.service;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import orgaplan.beratung.kreditunterlagen.enums.UserRole;
 import orgaplan.beratung.kreditunterlagen.model.User;
-import orgaplan.beratung.kreditunterlagen.repository.*;
+import orgaplan.beratung.kreditunterlagen.repository.UserRepository;
 import orgaplan.beratung.kreditunterlagen.request.CreateUserRequest;
 import orgaplan.beratung.kreditunterlagen.validation.UserRoleValidation;
 
@@ -25,7 +24,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public User findUserById(String id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Benutzer mit ID: " + id + " wurde nicht gefunden"));
+                .orElseThrow(() -> new IllegalArgumentException("Benutzer mit ID " + id + " wurde nicht gefunden"));
     }
 
     public boolean existsByEmail(String email) {
@@ -34,7 +33,6 @@ public class UserService {
 
     public User createUser(CreateUserRequest request) {
         UserRoleValidation.validateRole(request.getRole());
-
         UserRole role = UserRole.valueOf(request.getRole());
 
         if (role == UserRole.SUPER_ADMIN && userRepository.existsByRole(UserRole.SUPER_ADMIN)) {
@@ -62,6 +60,17 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User login(String email, String rawPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Benutzer nicht gefunden mit E-Mail: " + email));
+
+        if (!new BCryptPasswordEncoder().matches(rawPassword, user.getPassword())) {
+            throw new IllegalArgumentException("Falsches Passwort.");
+        }
+
+        return user;
+    }
+
     @Transactional(readOnly = true)
     public List<User> getUsers() {
         return userRepository.findAllByOrderByCreatedAtAsc();
@@ -70,6 +79,18 @@ public class UserService {
     public void updateUploadPercentage(String userId, BigDecimal percentageUploaded) {
         User user = findUserById(userId);
         user.setDocumentUploadPercentage(percentageUploaded);
+        user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
+    }
+
+    public User updateUser(String id, CreateUserRequest request) {
+        User user = findUserById(id);
+
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setUpdatedAt(LocalDateTime.now());
+
+        return userRepository.save(user);
     }
 }

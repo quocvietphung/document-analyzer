@@ -16,20 +16,24 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+
     @Autowired
     private UserService userService;
 
-    @PostMapping("/createUser")
+    @PostMapping("/create")
     public ResponseEntity<Map<String, Object>> createUser(@Valid @RequestBody CreateUserRequest request) {
         if (userService.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Ein Benutzer mit dieser E-Mail existiert bereits");
         }
 
         User user = userService.createUser(request);
+        return ResponseEntity.ok(Map.of("user", user));
+    }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("user", user);
-        return ResponseEntity.ok(response);
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password) {
+        User user = userService.login(email, password);
+        return ResponseEntity.ok(Map.of("user", user));
     }
 
     @GetMapping
@@ -37,9 +41,24 @@ public class UserController {
         return userService.getUsers();
     }
 
-    @PutMapping("/savePercentageUploaded")
-    public ResponseEntity<Object> savePercentageUploaded(@RequestParam String userId, @RequestParam BigDecimal percentageUploaded) {
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable String id) {
+        User user = userService.findUserById(id);
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody CreateUserRequest request) {
+        User updatedUser = userService.updateUser(id, request);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    // ✅ 6. Cập nhật phần trăm tài liệu đã upload
+    @PutMapping("/upload-percentage")
+    public ResponseEntity<?> savePercentageUploaded(
+            @RequestParam String userId,
+            @RequestParam BigDecimal percentageUploaded) {
         userService.updateUploadPercentage(userId, percentageUploaded);
-        return ResponseEntity.ok().body("Percentage updated successfully");
+        return ResponseEntity.ok(Map.of("message", "Upload percentage updated successfully"));
     }
 }

@@ -47,7 +47,7 @@ public class UserService {
                 .email(request.getEmail())
                 .password(new BCryptPasswordEncoder().encode(request.getPassword()))
                 .role(role)
-                .isActive(false)
+                .isActive(true)
                 .documentUploadPercentage(BigDecimal.ZERO)
                 .termsAndConditionsAccepted(request.getTermsAndConditionsAccepted())
                 .privacyPolicyAccepted(request.getPrivacyPolicyAccepted())

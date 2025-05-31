@@ -6,10 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.request.CreateUserRequest;
+import orgaplan.beratung.kreditunterlagen.request.LoginRequest;
 import orgaplan.beratung.kreditunterlagen.service.UserService;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +31,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password) {
-        User user = userService.login(email, password);
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+        User user = userService.login(request.getEmail(), request.getPassword());
         return ResponseEntity.ok(Map.of("user", user));
     }
 

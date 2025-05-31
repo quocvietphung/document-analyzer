@@ -53,7 +53,6 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
-    // ✅ 6. Cập nhật phần trăm tài liệu đã upload
     @PutMapping("/upload-percentage")
     public ResponseEntity<?> savePercentageUploaded(
             @RequestParam String userId,

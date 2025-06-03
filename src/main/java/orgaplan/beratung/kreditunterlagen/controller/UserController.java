@@ -52,12 +52,4 @@ public class UserController {
         User updatedUser = userService.updateUser(id, request);
         return ResponseEntity.ok(updatedUser);
     }
-
-    @PutMapping("/upload-percentage")
-    public ResponseEntity<?> savePercentageUploaded(
-            @RequestParam String userId,
-            @RequestParam BigDecimal percentageUploaded) {
-        userService.updateUploadPercentage(userId, percentageUploaded);
-        return ResponseEntity.ok(Map.of("message", "Upload percentage updated successfully"));
-    }
 }

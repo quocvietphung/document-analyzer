@@ -48,7 +48,6 @@ public class UserService {
                 .password(new BCryptPasswordEncoder().encode(request.getPassword()))
                 .role(role)
                 .isActive(true)
-                .documentUploadPercentage(BigDecimal.ZERO)
                 .termsAndConditionsAccepted(request.getTermsAndConditionsAccepted())
                 .privacyPolicyAccepted(request.getPrivacyPolicyAccepted())
                 .usageTermsAccepted(request.getUsageTermsAccepted())
@@ -74,13 +73,6 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<User> getUsers() {
         return userRepository.findAllByOrderByCreatedAtAsc();
-    }
-
-    public void updateUploadPercentage(String userId, BigDecimal percentageUploaded) {
-        User user = findUserById(userId);
-        user.setDocumentUploadPercentage(percentageUploaded);
-        user.setUpdatedAt(LocalDateTime.now());
-        userRepository.save(user);
     }
 
     public User updateUser(String id, CreateUserRequest request) {

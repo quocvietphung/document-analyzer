@@ -50,10 +50,6 @@ public class User {
     private Boolean isActive;
 
     @NotNull
-    @Column(name = "document_upload_percentage", precision = 5, scale = 1, nullable = false)
-    private BigDecimal documentUploadPercentage;
-
-    @NotNull
     @Column(name = "terms_and_conditions_accepted", nullable = false)
     private Boolean termsAndConditionsAccepted;
 

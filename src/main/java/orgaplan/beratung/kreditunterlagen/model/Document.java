@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
-import orgaplan.beratung.kreditunterlagen.enums.DocumentType;
 
 import java.time.LocalDateTime;
 

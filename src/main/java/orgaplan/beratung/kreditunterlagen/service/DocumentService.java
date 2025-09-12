@@ -114,8 +114,6 @@ public class DocumentService {
     }
 
     public boolean deleteDocument(String documentId, String userId) {
-        User user = userService.findUserById(userId);
-
         Optional<Document> documentOptional = documentRepository.findByIdAndUserId(documentId, userId);
         if (!documentOptional.isPresent()) {
             throw new IllegalArgumentException("Document not found or does not belong to the user with ID: " + userId);

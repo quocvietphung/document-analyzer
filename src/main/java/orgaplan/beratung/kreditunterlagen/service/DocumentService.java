@@ -11,18 +11,16 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import orgaplan.beratung.kreditunterlagen.Types;
-import orgaplan.beratung.kreditunterlagen.enums.DocumentType;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -50,15 +48,13 @@ public class DocumentService {
             document.add(image);
             document.close();
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error converting image to PDF: " + e.getMessage());
+            throw new RuntimeException("Error converting image to PDF: " + e.getMessage(), e);
         }
     }
 
     public Document save(MultipartFile file, String documentType, User user) throws IOException {
-        DocumentType docType = DocumentType.valueOf(documentType);
         Document document = new Document();
-        document.setDocumentType(docType);
+        document.setDocumentType(documentType);
         document.setUser(user);
         document.setCreatedAt(LocalDateTime.now());
         document.setUpdatedAt(LocalDateTime.now());
@@ -94,7 +90,6 @@ public class DocumentService {
             if (!resource.exists()) {
                 throw new IllegalArgumentException("File not found " + storedFileName);
             }
-
             return resource;
         } catch (MalformedURLException ex) {
             throw new IllegalArgumentException("File not found " + fileRequest.getDocumentId(), ex);
@@ -112,61 +107,10 @@ public class DocumentService {
     public DocumentResponse getUserDocumentsByUserId(String userId) {
         List<Document> documents = getDocumentsByUserId(userId);
 
-        List<String> mainUserDocumentTypes = new ArrayList<>();
-        List<String> spouseDocumentTypes = new ArrayList<>();
-        List<String> optionDocumentsTypes = Arrays.asList(DocumentType.SONSTIGE_DOKUMENTE.name());
-
-        Boolean isSelfEmployed = null;
-
-        Map<String, List<Document>> docMap = initializeDocumentMap(mainUserDocumentTypes);
-        Map<String, List<Document>> spouseDocMap = initializeDocumentMap(spouseDocumentTypes);
-        Map<String, List<Document>> optionDocMap = initializeDocumentMap(optionDocumentsTypes);
-
-        int completedDocumentTypes = categorizeDocuments(documents, docMap, spouseDocMap, optionDocMap);
-
-        int totalDocumentTypes = mainUserDocumentTypes.size() + spouseDocumentTypes.size() + 1;
-        BigDecimal percentageUploaded = calculatePercentageUploaded(totalDocumentTypes, completedDocumentTypes);
-
         return DocumentResponse.builder()
-                .regularDocuments(docMap)
-                .ehepartnerDocuments(spouseDocMap.isEmpty() ? null : spouseDocMap)
-                .optionDocuments(optionDocMap)
-                .percentageUploaded(percentageUploaded)
-                .isSelfEmployed(isSelfEmployed)
+                .documents(documents)
+                .isSelfEmployed(null)
                 .build();
-    }
-
-    private Map<String, List<Document>> initializeDocumentMap(List<String> documentTypes) {
-        Map<String, List<Document>> docMap = new LinkedHashMap<>();
-        documentTypes.forEach(docType -> docMap.put(docType, new ArrayList<>()));
-        return docMap;
-    }
-
-    private int categorizeDocuments(List<Document> documents, Map<String, List<Document>> docMap, Map<String, List<Document>> spouseDocMap, Map<String, List<Document>> optionDocMap) {
-        Set<String> completedTypes = new HashSet<>();
-
-        documents.forEach(document -> {
-            String docTypeName = document.getDocumentType().name();
-            if (docMap.containsKey(docTypeName)) {
-                docMap.get(docTypeName).add(document);
-                completedTypes.add(docTypeName);
-            } else if (spouseDocMap.containsKey(docTypeName)) {
-                spouseDocMap.get(docTypeName).add(document);
-                completedTypes.add(docTypeName);
-            } else if (optionDocMap.containsKey(docTypeName)) {
-                optionDocMap.get(docTypeName).add(document);
-            }
-        });
-
-        return completedTypes.size();
-    }
-
-    private BigDecimal calculatePercentageUploaded(int totalDocumentTypes, int completedDocumentTypes) {
-        if (totalDocumentTypes == 0) return BigDecimal.ZERO;
-        return new BigDecimal(completedDocumentTypes)
-                .divide(new BigDecimal(totalDocumentTypes), 2, RoundingMode.HALF_UP)
-                .multiply(new BigDecimal(100))
-                .setScale(0, RoundingMode.HALF_UP);
     }
 
     public boolean deleteDocument(String documentId, String userId) {

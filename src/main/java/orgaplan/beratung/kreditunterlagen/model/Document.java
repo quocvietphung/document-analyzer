@@ -27,9 +27,8 @@ public class Document {
     @JsonBackReference
     private User user;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "document_type", nullable = false, length = 255)
-    private DocumentType documentType;
+    private String documentType;
 
     @Column(name = "file_name", length = 255)
     private String fileName;

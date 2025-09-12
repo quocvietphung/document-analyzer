@@ -1,12 +1,8 @@
 package orgaplan.beratung.kreditunterlagen.service;
 
-import orgaplan.beratung.kreditunterlagen.dto.SelbstauskunftDocumentDTO;
-import orgaplan.beratung.kreditunterlagen.model.Company;
 import orgaplan.beratung.kreditunterlagen.model.Document;
 import orgaplan.beratung.kreditunterlagen.model.User;
-import orgaplan.beratung.kreditunterlagen.repository.CompanyRepository;
 import orgaplan.beratung.kreditunterlagen.repository.DocumentRepository;
-import orgaplan.beratung.kreditunterlagen.repository.SelbstauskunftRepository;
 import orgaplan.beratung.kreditunterlagen.request.FileDownloadRequest;
 import orgaplan.beratung.kreditunterlagen.response.DocumentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +11,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import orgaplan.beratung.kreditunterlagen.Types;
+import orgaplan.beratung.kreditunterlagen.enums.DocumentType;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,12 +39,6 @@ public class DocumentService {
     @Autowired
     private DocumentRepository documentRepository;
 
-    @Autowired
-    private SelbstauskunftRepository selbstauskunftRepository;
-
-    @Autowired
-    private CompanyRepository companyRepository;
-
     private void convertImageToPdf(MultipartFile file, Path outputPath) {
         com.itextpdf.text.Document document = new com.itextpdf.text.Document();
         try {
@@ -65,7 +56,7 @@ public class DocumentService {
     }
 
     public Document save(MultipartFile file, String documentType, User user) throws IOException {
-        Types.DocumentType docType = Types.DocumentType.valueOf(documentType);
+        DocumentType docType = DocumentType.valueOf(documentType);
         Document document = new Document();
         document.setDocumentType(docType);
         document.setUser(user);
@@ -120,28 +111,12 @@ public class DocumentService {
 
     public DocumentResponse getUserDocumentsByUserId(String userId) {
         List<Document> documents = getDocumentsByUserId(userId);
-        User user = userService.findUserById(userId);
 
         List<String> mainUserDocumentTypes = new ArrayList<>();
         List<String> spouseDocumentTypes = new ArrayList<>();
-        List<String> optionDocumentsTypes = Arrays.asList(Types.DocumentType.SONSTIGE_DOKUMENTE.name());
+        List<String> optionDocumentsTypes = Arrays.asList(DocumentType.SONSTIGE_DOKUMENTE.name());
 
         Boolean isSelfEmployed = null;
-
-        if (user.getRole() == Types.UserRole.PRIVAT_KUNDE) {
-            mainUserDocumentTypes.addAll(Types.getPrivatKundenDocuments());
-        } else if (user.getRole() == Types.UserRole.FIRMEN_KUNDE) {
-            mainUserDocumentTypes.addAll(Types.getFirmenKundenDocuments());
-
-            Company company = companyRepository.findByUserId(userId);
-            if (company != null) {
-                isSelfEmployed = company.getIsSelfEmployed();
-            }
-        }
-
-        if (user.getWithSecondPartner()) {
-            spouseDocumentTypes.addAll(Types.getEhepartnerDocuments());
-        }
 
         Map<String, List<Document>> docMap = initializeDocumentMap(mainUserDocumentTypes);
         Map<String, List<Document>> spouseDocMap = initializeDocumentMap(spouseDocumentTypes);
@@ -149,22 +124,12 @@ public class DocumentService {
 
         int completedDocumentTypes = categorizeDocuments(documents, docMap, spouseDocMap, optionDocMap);
 
-        Optional<SelbstauskunftDocumentDTO> selbstauskunftDocumentDTOOptional = selbstauskunftRepository.findSelbstauskunftDocumentByUserId(userId);
-        SelbstauskunftDocumentDTO selbstauskunftDocumentDTO = null;
-        if (selbstauskunftDocumentDTOOptional.isPresent()) {
-            selbstauskunftDocumentDTO = selbstauskunftDocumentDTOOptional.get();
-            if (selbstauskunftDocumentDTO.getStatus() == Types.SelbstauskunftStatus.COMPLETED) {
-                completedDocumentTypes++;
-            }
-        }
-
         int totalDocumentTypes = mainUserDocumentTypes.size() + spouseDocumentTypes.size() + 1;
         BigDecimal percentageUploaded = calculatePercentageUploaded(totalDocumentTypes, completedDocumentTypes);
 
         return DocumentResponse.builder()
                 .regularDocuments(docMap)
                 .ehepartnerDocuments(spouseDocMap.isEmpty() ? null : spouseDocMap)
-                .selbstauskunftDocument(selbstauskunftDocumentDTO)
                 .optionDocuments(optionDocMap)
                 .percentageUploaded(percentageUploaded)
                 .isSelfEmployed(isSelfEmployed)
@@ -210,10 +175,6 @@ public class DocumentService {
         Optional<Document> documentOptional = documentRepository.findByIdAndUserId(documentId, userId);
         if (!documentOptional.isPresent()) {
             throw new IllegalArgumentException("Document not found or does not belong to the user with ID: " + userId);
-        }
-
-        if (user.getForwardedBanks()) {
-            throw new RuntimeException("Banken Weiterleitung wurde aktiviert, Sie können dieses Dokument nicht löschen");
         }
 
         Document document = documentOptional.get();

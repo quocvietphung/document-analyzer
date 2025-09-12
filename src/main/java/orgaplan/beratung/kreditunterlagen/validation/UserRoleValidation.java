@@ -1,6 +1,5 @@
 package orgaplan.beratung.kreditunterlagen.validation;
-
-import orgaplan.beratung.kreditunterlagen.Types.UserRole;
+import orgaplan.beratung.kreditunterlagen.enums.UserRole;
 
 public class UserRoleValidation {
 

@@ -1,12 +1,12 @@
 package orgaplan.beratung.kreditunterlagen.model;
 
-import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import orgaplan.beratung.kreditunterlagen.enums.UserRole;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-import lombok.*;
-import orgaplan.beratung.kreditunterlagen.Types.UserRole;
 
 @Entity
 @Table(name = "users")
@@ -15,13 +15,10 @@ import orgaplan.beratung.kreditunterlagen.Types.UserRole;
 @AllArgsConstructor
 @Builder
 public class User {
+
     @Id
     @Column(name = "id", length = 36)
     private String id;
-
-    @NotNull
-    @Column(name = "vermittler_id", length = 36, nullable = false)
-    private String vermittlerId;
 
     @NotNull
     @Column(name = "first_name", nullable = false)
@@ -39,27 +36,18 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @NotNull
+    @Column(name = "password", nullable = false, unique = true)
+    private String password;
+
     @Enumerated(EnumType.STRING)
     @NotNull
     @Column(name = "role", nullable = false)
     private UserRole role;
 
-    @Column(name = "with_second_partner")
-    private Boolean withSecondPartner;
-
+    @NotNull
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
-
-    @NotNull
-    @Column(name = "document_upload_percentage", precision = 5, scale = 1, nullable = false)
-    private BigDecimal documentUploadPercentage;
-
-    @NotNull
-    @Column(name = "forwarded_banks", nullable = false)
-    private Boolean forwardedBanks;
-
-    @Column(name = "forwarded_banks_at")
-    private LocalDateTime forwardedBanksAt;
 
     @NotNull
     @Column(name = "terms_and_conditions_accepted", nullable = false)

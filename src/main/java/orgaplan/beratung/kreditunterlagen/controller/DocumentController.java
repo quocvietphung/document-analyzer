@@ -9,9 +9,7 @@ import orgaplan.beratung.kreditunterlagen.repository.DocumentRepository;
 import orgaplan.beratung.kreditunterlagen.request.FileDownloadRequest;
 import orgaplan.beratung.kreditunterlagen.response.DocumentResponse;
 import orgaplan.beratung.kreditunterlagen.service.DocumentService;
-import orgaplan.beratung.kreditunterlagen.service.KreditvermittlerService;
 import orgaplan.beratung.kreditunterlagen.service.UserService;
-import orgaplan.beratung.kreditunterlagen.validation.DocumentValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -39,21 +37,14 @@ public class DocumentController {
     private UserService userService;
 
     @Autowired
-    private KreditvermittlerService kreditvermittlerService;
-
-    @Autowired
-    private DocumentValidation documentValidation;
-
-    @Autowired
     private DocumentRepository documentRepository;
 
     @PostMapping("/upload")
     public ResponseEntity<Object> uploadDocument(@RequestParam("file") MultipartFile file,
-                                                 @RequestParam("type") String documentType) throws Exception {
+                                                 @RequestParam("type") String documentType,
+                                                 @RequestParam String userId) throws Exception {
 
-        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
         User user = userService.findUserById(userId);
-        documentValidation.validateDocumentTypeForUserRole(documentType, user);
         Document document = documentService.save(file, documentType, user);
 
         Map<String, Object> response = new HashMap<>();
@@ -64,26 +55,16 @@ public class DocumentController {
     }
 
     @GetMapping("/getUserDocuments")
-    public DocumentResponse getUserDocuments() {
-        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
+    public DocumentResponse getUserDocuments(@RequestParam String userId) {
         return documentService.getUserDocumentsByUserId(userId);
     }
 
     @GetMapping("/view")
     public ResponseEntity<?> viewDocument(@RequestParam String documentId,
-                                          @RequestParam(required = false) String userId,
+                                          @RequestParam String userId,
                                           HttpServletRequest request) {
-        String currentUserId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
-        boolean isKreditvermittler = false;
-
-        Optional<Document> documentOptional;
-
-        if (isKreditvermittler && userId != null) {
-            kreditvermittlerService.findUserByVermittler(currentUserId, userId);
-            documentOptional = documentRepository.findByIdAndUserId(documentId, userId);
-        } else {
-            documentOptional = documentRepository.findByIdAndUserId(documentId, currentUserId);
-        }
+        String currentUserId = userId;
+        Optional<Document> documentOptional = documentRepository.findByIdAndUserId(documentId, currentUserId);
 
         if (!documentOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Sie haben keine Berechtigung, dieses Dokument anzuzeigen oder das Dokument existiert nicht");
@@ -117,8 +98,8 @@ public class DocumentController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteDocument(@RequestParam String documentId) {
-        String userId = "be86ad97-d2f5-4ea0-9576-aca58ee1d51d";
+    public ResponseEntity<String> deleteDocument(@RequestParam String documentId,
+                                                 @RequestParam String userId) {
         boolean deleted = documentService.deleteDocument(documentId, userId);
         if (deleted) {
             return ResponseEntity.ok().body("Document deleted successfully");

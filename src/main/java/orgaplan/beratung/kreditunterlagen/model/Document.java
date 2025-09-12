@@ -1,13 +1,11 @@
 package orgaplan.beratung.kreditunterlagen.model;
 
-import org.hibernate.annotations.GenericGenerator;
-import orgaplan.beratung.kreditunterlagen.Types;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+import orgaplan.beratung.kreditunterlagen.enums.DocumentType;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,9 +27,9 @@ public class Document {
     @JsonBackReference
     private User user;
 
-    @Column(name = "document_type", nullable = false, length = 255)
     @Enumerated(EnumType.STRING)
-    private Types.DocumentType documentType;
+    @Column(name = "document_type", nullable = false, length = 255)
+    private DocumentType documentType;
 
     @Column(name = "file_name", length = 255)
     private String fileName;

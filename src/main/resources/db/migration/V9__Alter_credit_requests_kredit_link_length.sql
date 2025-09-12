@@ -1,1 +1,0 @@
-ALTER TABLE credit_requests MODIFY kredit_link VARCHAR(512);

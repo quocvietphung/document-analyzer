@@ -9,7 +9,6 @@ import orgaplan.beratung.kreditunterlagen.request.CreateUserRequest;
 import orgaplan.beratung.kreditunterlagen.request.LoginRequest;
 import orgaplan.beratung.kreditunterlagen.service.UserService;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 

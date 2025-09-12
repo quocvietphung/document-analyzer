@@ -32,22 +32,6 @@ It provides RESTful APIs to manage **users** and **documents**, including creati
 
 ---
 
-## 📂 Project Structure
-```
-document-api/
- ├── src/main/java/com/example/documentapi
- │    ├── controller/      # REST controllers (User, Document)
- │    ├── model/           # Entities: User, Document
- │    ├── repository/      # JPA repositories
- │    ├── service/         # Business logic layer
- │    └── DocumentApiApplication.java
- ├── src/main/resources/
- │    └── application.yml
- └── pom.xml
-```
-
----
-
 ## 🚀 Getting Started
 
 ### Prerequisites

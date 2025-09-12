@@ -17,8 +17,8 @@
 	<groupId>orgaplan.beratung</groupId>
 	<artifactId>document-api</artifactId>
 	<version>1.0.1-SNAPSHOT</version>
-	<name>KreditunterlagenAPI</name>
-	<description>KreditunterlagenAPI</description>
+	<name>document-api</name>
+	<description>document-api</description>
 
 	<!-- Các thuộc tính -->
 	<properties>

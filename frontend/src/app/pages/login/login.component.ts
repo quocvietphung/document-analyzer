@@ -12,7 +12,13 @@ import { ApiService } from '../../services/api.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: true,
-  imports: [FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule]
+  imports: [
+    FormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
+  ]
 })
 export class LoginComponent {
   email: string = '';
@@ -24,7 +30,9 @@ export class LoginComponent {
     this.apiService.login(this.email, this.password).subscribe({
       next: (res: any) => {
         localStorage.setItem('user', JSON.stringify(res.user));
+        localStorage.setItem('userId', res.user.id);
         localStorage.setItem('token', 'fake-token');
+
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {

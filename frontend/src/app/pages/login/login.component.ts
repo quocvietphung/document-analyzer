@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 import { ApiService } from '../../services/api.service';
 
 @Component({
@@ -8,7 +12,7 @@ import { ApiService } from '../../services/api.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: true,
-  imports: [FormsModule]
+  imports: [FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule]
 })
 export class LoginComponent {
   email: string = '';
@@ -27,5 +31,9 @@ export class LoginComponent {
         alert('Login failed: ' + (err.error?.message || err.message));
       }
     });
+  }
+
+  goToRegister() {
+    this.router.navigate(['/register']);
   }
 }

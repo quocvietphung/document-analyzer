@@ -22,12 +22,12 @@
     </div>
   </mat-card>
 
-  <!-- Document list (hiện ngay trong dashboard) -->
+  <!-- Document list -->
   <mat-card class="document-list" *ngIf="documents.length > 0">
     <h3>📑 Your Documents</h3>
     <mat-list>
       <mat-list-item *ngFor="let doc of documents">
-        {{ doc.fileName }} ({{ doc.documentType }})
+        <span>{{ doc.fileName }} ({{ doc.documentType }})</span>
         <button mat-icon-button color="warn" (click)="deleteDocument(doc.id)">
           <mat-icon>delete</mat-icon>
         </button>

@@ -17,4 +17,17 @@ export class ApiService {
   register(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/users/create`, data);
   }
+
+  getUserDocuments(userId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/documents/getUserDocuments`, {
+      params: { userId }
+    });
+  }
+
+  deleteDocument(documentId: string, userId: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/documents/delete`, {
+      params: { documentId, userId },
+      responseType: 'text'
+    });
+  }
 }

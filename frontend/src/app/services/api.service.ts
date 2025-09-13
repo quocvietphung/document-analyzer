@@ -30,4 +30,8 @@ export class ApiService {
       responseType: 'text'
     });
   }
+
+  uploadDocument(data: FormData): Observable<any> {
+    return this.http.post(`${this.baseUrl}/documents/upload`, data);
+  }
 }

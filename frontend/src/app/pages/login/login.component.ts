@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';   // 👈 cần import
+import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 
 @Component({
@@ -19,7 +19,6 @@ export class LoginComponent {
   onLogin() {
     this.apiService.login(this.email, this.password).subscribe({
       next: (res: any) => {
-        // lưu user info/token vào localStorage
         localStorage.setItem('user', JSON.stringify(res.user));
         localStorage.setItem('token', 'fake-token');
         this.router.navigate(['/dashboard']);

@@ -3,39 +3,54 @@
     <h2 class="register-title">Create Your Account ✨</h2>
 
     <form (ngSubmit)="onRegister()" class="register-form">
+      <!-- First name -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>First Name</mat-label>
         <input matInput [(ngModel)]="firstName" name="firstName" required />
       </mat-form-field>
 
+      <!-- Last name -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Last Name</mat-label>
         <input matInput [(ngModel)]="lastName" name="lastName" required />
       </mat-form-field>
 
+      <!-- Email -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Email</mat-label>
         <input matInput type="email" [(ngModel)]="email" name="email" required />
       </mat-form-field>
 
+      <!-- Phone -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Phone Number</mat-label>
         <input matInput type="tel" [(ngModel)]="phoneNumber" name="phoneNumber" />
       </mat-form-field>
 
+      <!-- Password -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Password</mat-label>
         <input matInput type="password" [(ngModel)]="password" name="password" required />
       </mat-form-field>
 
-      <!-- Điều khoản -->
+      <!-- Terms -->
       <mat-checkbox [(ngModel)]="termsAndConditionsAccepted" name="terms" required>
         I accept the Terms & Conditions
       </mat-checkbox>
+
       <mat-checkbox [(ngModel)]="privacyPolicyAccepted" name="privacy" required>
         I accept the Privacy Policy
       </mat-checkbox>
 
+      <mat-checkbox [(ngModel)]="usageTermsAccepted" name="usage" required>
+        I accept the Usage Terms
+      </mat-checkbox>
+
+      <mat-checkbox [(ngModel)]="consentTermsAccepted" name="consent" required>
+        I give my Consent
+      </mat-checkbox>
+
+      <!-- Submit -->
       <button mat-raised-button color="primary" class="full-width">
         Register
       </button>

@@ -37,6 +37,8 @@ export class RegisterComponent {
   // terms
   termsAndConditionsAccepted = false;
   privacyPolicyAccepted = false;
+  usageTermsAccepted = false;
+  consentTermsAccepted = false;
 
   constructor(private apiService: ApiService, private router: Router) {}
 
@@ -49,7 +51,9 @@ export class RegisterComponent {
       password: this.password,
       role: this.role,
       termsAndConditionsAccepted: this.termsAndConditionsAccepted,
-      privacyPolicyAccepted: this.privacyPolicyAccepted
+      privacyPolicyAccepted: this.privacyPolicyAccepted,
+      usageTermsAccepted: this.usageTermsAccepted,
+      consentTermsAccepted: this.consentTermsAccepted
     };
 
     this.apiService.register(request).subscribe({

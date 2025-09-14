@@ -37,6 +37,19 @@
     color: var(--primary);
   }
 
+  .logout {
+    margin: 0.5rem auto;
+    width: 100%;
+    border-radius: 12px;
+    justify-content: flex-start;
+    font-weight: 600;
+
+    mat-icon {
+      margin-right: .4rem;
+      color: #e53935;
+    }
+  }
+
   .brand {
     display: flex;
     align-items: center;
@@ -74,18 +87,6 @@
 
     &.active {
       background: rgba(124, 77, 255, .12);
-    }
-  }
-
-  .spacer {
-    flex: 1;
-  }
-
-  .logout {
-    border-radius: 12px;
-
-    mat-icon {
-      margin-right: .4rem;
     }
   }
 }

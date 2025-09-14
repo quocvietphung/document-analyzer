@@ -16,13 +16,11 @@
       <mat-icon>folder</mat-icon>
       <span *ngIf="!isCollapsed">Documents</span>
     </button>
+
+    <!-- Logout ngay sau menu -->
+    <button class="logout" mat-stroked-button color="warn" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span *ngIf="!isCollapsed">Logout</span>
+    </button>
   </nav>
-
-  <div class="spacer"></div>
-
-  <!-- Logout -->
-  <button class="logout" mat-stroked-button color="warn" (click)="logout()">
-    <mat-icon>logout</mat-icon>
-    <span *ngIf="!isCollapsed">Logout</span>
-  </button>
 </aside>

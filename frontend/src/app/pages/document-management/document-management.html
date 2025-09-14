@@ -1,39 +1,46 @@
-<div class="document-management-wrapper">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-item active">
-      <mat-icon>folder</mat-icon>
-      <span>Documents</span>
+<main class="document-management-content">
+  <h2 class="document-management-title">Welcome to Document Management 📂</h2>
+  <p class="document-management-subtitle">
+    Manage your documents <b>securely</b> and efficiently
+  </p>
+
+  <!-- Upload -->
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="fileInput.click()"
+    class="upload-btn"
+  >
+    <mat-icon>cloud_upload</mat-icon>
+    Upload Document
+  </button>
+  <input type="file" hidden (change)="onFileSelected($event)" #fileInput />
+
+  <!-- Document List -->
+  <div class="document-list" *ngIf="documents.length > 0; else emptyState">
+    <h3>Your Documents</h3>
+    <mat-list>
+      <mat-list-item *ngFor="let doc of documents">
+        <mat-icon color="primary">description</mat-icon>
+        <span class="doc-info">{{ doc.fileName }}</span>
+        <small class="doc-type">{{ doc.documentType }}</small>
+        <button mat-icon-button color="warn" (click)="deleteDocument(doc.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+  </div>
+
+  <!-- Empty state -->
+  <ng-template #emptyState>
+    <div class="empty-card">
+      <mat-icon>folder_open</mat-icon>
+      <h4>No documents yet</h4>
+      <p>Upload your first file to get started.</p>
+      <button mat-raised-button color="primary" (click)="fileInput.click()">
+        <mat-icon>upload</mat-icon>
+        Upload now
+      </button>
     </div>
-  </aside>
-
-  <!-- Main Content -->
-  <main class="document-management-content">
-    <h2 class="document-management-title">Welcome to Document Management 📂</h2>
-    <p class="document-management-subtitle">
-      Manage your documents <b>securely</b> and efficiently
-    </p>
-
-    <!-- Upload -->
-    <button mat-raised-button color="primary" (click)="fileInput.click()" class="upload-btn">
-      <mat-icon>cloud_upload</mat-icon>
-      Upload Document
-    </button>
-    <input type="file" hidden (change)="onFileSelected($event)" #fileInput />
-
-    <!-- Document List -->
-    <div class="document-list" *ngIf="documents.length > 0">
-      <h3>Your Documents</h3>
-      <mat-list>
-        <mat-list-item *ngFor="let doc of documents">
-          <mat-icon color="primary">description</mat-icon>
-          <span class="doc-info">{{ doc.fileName }}</span>
-          <small class="doc-type">{{ doc.documentType }}</small>
-          <button mat-icon-button color="warn" (click)="deleteDocument(doc.id)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </mat-list-item>
-      </mat-list>
-    </div>
-  </main>
-</div>
+  </ng-template>
+</main>

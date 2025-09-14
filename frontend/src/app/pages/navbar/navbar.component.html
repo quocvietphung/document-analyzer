@@ -1,24 +1,28 @@
-<div class="sidebar" [class.collapsed]="isCollapsed">
-  <!-- Nút toggle -->
+<aside class="sidebar" [class.collapsed]="isCollapsed">
+  <!-- Toggle -->
   <button mat-icon-button class="menu-btn" (click)="toggleMenu()">
     <mat-icon>{{ isCollapsed ? 'menu_open' : 'menu' }}</mat-icon>
   </button>
 
-  <!-- Logo / Title -->
-  <div class="sidebar-title" *ngIf="!isCollapsed">
-    Document App
+  <!-- Logo -->
+  <div class="brand" *ngIf="!isCollapsed">
+    <mat-icon>inventory_2</mat-icon>
+    <span>Document App</span>
   </div>
 
-  <!-- Menu items -->
-  <div class="menu-items">
-    <button mat-button routerLink="/document-management">
-      <mat-icon>description</mat-icon>
-      <span *ngIf="!isCollapsed">Document Management</span>
+  <!-- Menu -->
+  <nav class="menu">
+    <button class="menu-item active" mat-button routerLink="/document-management">
+      <mat-icon>folder</mat-icon>
+      <span *ngIf="!isCollapsed">Documents</span>
     </button>
+  </nav>
 
-    <button mat-button color="warn" (click)="logout()">
-      <mat-icon>logout</mat-icon>
-      <span *ngIf="!isCollapsed">Logout</span>
-    </button>
-  </div>
-</div>
+  <div class="spacer"></div>
+
+  <!-- Logout -->
+  <button class="logout" mat-stroked-button color="warn" (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    <span *ngIf="!isCollapsed">Logout</span>
+  </button>
+</aside>

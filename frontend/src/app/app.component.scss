@@ -1,0 +1,11 @@
+.app-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr; /* Sidebar 240px + content auto */
+  min-height: 100vh;
+}
+
+.app-content {
+  background: linear-gradient(135deg, #f4f2ff, #ffffff);
+  padding: 2rem;
+  overflow-y: auto;
+}

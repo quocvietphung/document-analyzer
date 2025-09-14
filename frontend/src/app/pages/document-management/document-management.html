@@ -1,48 +1,44 @@
-<!-- src/app/pages/document-management/document-management.html -->
 <mat-sidenav-container class="dm-shell">
 
-  <!-- Nội dung chính -->
+  <!-- Main Content -->
   <mat-sidenav-content>
-
     <main class="document-management-content">
-      <h2 class="document-management-title">Welcome to Document Management 📂</h2>
+      <h2 class="document-management-title">Your Documents 📑</h2>
       <p class="document-management-subtitle">
-        Manage your documents <b>securely</b> and efficiently
+        Browse and preview your uploaded files
       </p>
 
-      <!-- 1 input duy nhất dùng chung -->
+      <!-- Upload button -->
+      <button mat-raised-button color="primary" class="upload-btn" (click)="uploader.click()">
+        <mat-icon>cloud_upload</mat-icon>
+        Upload Document
+      </button>
       <input #uploader type="file" hidden (change)="onFileSelected($event)" />
 
-      <!-- Document List -->
-      <div class="document-list" *ngIf="documents.length > 0; else emptyState">
-        <div class="section-head">
-          <h3>Your Documents</h3>
-          <button mat-stroked-button color="primary" (click)="uploader.click()">
-            <mat-icon>cloud_upload</mat-icon>
-            Upload
-          </button>
-        </div>
+      <!-- Document cards -->
+      <div class="doc-cards" *ngIf="documents.length > 0; else emptyState">
+        <mat-card
+          class="doc-card"
+          *ngFor="let doc of documents"
+          (click)="viewDocument(doc)"
+        >
+          <mat-card-header>
+            <mat-icon mat-card-avatar color="primary">description</mat-icon>
+            <mat-card-title>{{ doc.fileName }}</mat-card-title>
+            <mat-card-subtitle>{{ doc.documentType || 'GENERAL' }}</mat-card-subtitle>
+          </mat-card-header>
 
-        <mat-list>
-          <mat-list-item *ngFor="let doc of documents" class="doc-item">
-            <div class="doc-click" (click)="viewDocument(doc)">
-              <mat-icon color="primary" class="file-icon">description</mat-icon>
-              <div class="meta">
-                <span class="doc-info" [title]="doc.fileName">{{ doc.fileName }}</span>
-                <small class="doc-type">{{ doc.documentType || 'GENERAL' }}</small>
-              </div>
-            </div>
-
+          <mat-card-actions align="end">
             <button
               mat-icon-button
               color="warn"
               (click)="$event.stopPropagation(); deleteDocument(doc.id)"
-              aria-label="Delete document"
+              matTooltip="Delete"
             >
               <mat-icon>delete</mat-icon>
             </button>
-          </mat-list-item>
-        </mat-list>
+          </mat-card-actions>
+        </mat-card>
       </div>
 
       <!-- Empty state -->
@@ -51,17 +47,12 @@
           <mat-icon>folder_open</mat-icon>
           <h4>No documents yet</h4>
           <p>Upload your first file to get started.</p>
-          <button mat-raised-button color="primary" (click)="uploader.click()">
-            <mat-icon>upload</mat-icon>
-            Upload now
-          </button>
         </div>
       </ng-template>
     </main>
-
   </mat-sidenav-content>
 
-  <!-- Viewer kiểu LinkedIn: slide-in từ phải -->
+  <!-- PDF Viewer -->
   <mat-sidenav
     class="dm-viewer"
     position="end"
@@ -70,7 +61,7 @@
     (closedStart)="onViewerClosed()"
   >
     <mat-toolbar class="viewer-toolbar" color="primary">
-      <span class="viewer-title" [title]="viewerName">{{ viewerName || 'Document' }}</span>
+      <span class="viewer-title">{{ viewerName }}</span>
       <span class="spacer"></span>
       <button mat-icon-button (click)="openInNewTab()" matTooltip="Open in new tab">
         <mat-icon>open_in_new</mat-icon>
@@ -89,27 +80,12 @@
         <div>Loading PDF…</div>
       </div>
 
-      <ng-container *ngIf="!loadingViewer">
-        <!-- Ưu tiên object (hỗ trợ tốt height/zoom), fallback link -->
-        <object
-          *ngIf="viewerUrl; else viewerFallback"
-          [data]="viewerUrl"
-          type="application/pdf"
-          class="pdf-object"
-        >
-        </object>
-
-        <ng-template #viewerFallback>
-          <div class="viewer-fallback">
-            <p>Your browser can’t display this PDF.</p>
-            <button mat-stroked-button color="primary" (click)="openInNewTab()">
-              <mat-icon>open_in_new</mat-icon>
-              Open in new tab
-            </button>
-          </div>
-        </ng-template>
-      </ng-container>
+      <object
+        *ngIf="!loadingViewer && viewerUrl"
+        [data]="viewerUrl"
+        type="application/pdf"
+        class="pdf-object"
+      ></object>
     </div>
   </mat-sidenav>
-
 </mat-sidenav-container>

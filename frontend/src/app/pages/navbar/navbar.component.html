@@ -6,14 +6,14 @@
 
   <!-- Logo / Title -->
   <div class="sidebar-title" *ngIf="!isCollapsed">
-    Document Management
+    Document App
   </div>
 
   <!-- Menu items -->
   <div class="menu-items">
-    <button mat-button routerLink="/dashboard">
-      <mat-icon>dashboard</mat-icon>
-      <span *ngIf="!isCollapsed">Dashboard</span>
+    <button mat-button routerLink="/document-management">
+      <mat-icon>description</mat-icon>
+      <span *ngIf="!isCollapsed">Document Management</span>
     </button>
 
     <button mat-button color="warn" (click)="logout()">

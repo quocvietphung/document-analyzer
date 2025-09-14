@@ -9,10 +9,17 @@
   padding-top: 1rem;
   transition: width 0.3s ease;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
 
   &.collapsed {
     width: 70px;
+
     .sidebar-title {
+      display: none;
+    }
+
+    .menu-items button span {
       display: none;
     }
   }
@@ -29,6 +36,7 @@
   text-align: center;
   font-weight: bold;
   margin: 1rem 0;
+  font-size: 1.2rem;
 }
 
 .menu-items {
@@ -40,6 +48,13 @@
   button {
     justify-content: flex-start;
     color: #fff;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
 
     mat-icon {
       margin-right: 0.5rem;

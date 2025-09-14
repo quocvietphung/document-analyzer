@@ -26,11 +26,16 @@ export class DashboardComponent implements OnInit {
   documents: any[] = [];
   userId: string | null = null;
 
-  constructor(private apiService: ApiService, private router: Router) {}
+  constructor(
+    private apiService: ApiService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.userId = localStorage.getItem('userId');
-    console.log('📌 Loaded userId from localStorage:', this.userId);
+    if (typeof window !== 'undefined') {
+      this.userId = localStorage.getItem('userId');
+      console.log('📌 Loaded userId from localStorage:', this.userId);
+    }
 
     if (this.userId) {
       this.loadDocuments();
@@ -39,8 +44,8 @@ export class DashboardComponent implements OnInit {
 
   loadDocuments(): void {
     if (!this.userId) return;
-    console.log('📥 Fetching documents for userId:', this.userId);
 
+    console.log('📥 Fetching documents for userId:', this.userId);
     this.apiService.getUserDocuments(this.userId).subscribe({
       next: (res) => {
         console.log('✅ Documents loaded:', res);
@@ -67,27 +72,33 @@ export class DashboardComponent implements OnInit {
           console.log('✅ Upload successful');
           this.loadDocuments();
         },
-        error: (err) => console.error('❌ Upload failed:', err)
+        error: (err) => {
+          console.error('❌ Upload failed:', err);
+        }
       });
     }
   }
 
   deleteDocument(docId: string): void {
     if (!this.userId) return;
-    console.log('🗑️ Deleting document:', docId, 'for userId:', this.userId);
 
+    console.log('🗑️ Deleting document:', docId, 'for userId:', this.userId);
     this.apiService.deleteDocument(docId, this.userId).subscribe({
       next: () => {
         console.log('✅ Document deleted:', docId);
         this.documents = this.documents.filter(d => d.id !== docId);
       },
-      error: (err) => console.error('❌ Delete failed:', err)
+      error: (err) => {
+        console.error('❌ Delete failed:', err);
+      }
     });
   }
 
   logout(): void {
     console.log('🚪 Logging out, clearing localStorage');
-    localStorage.clear();
+    if (typeof window !== 'undefined') {
+      localStorage.clear();
+    }
     this.router.navigate(['/login']);
   }
 }

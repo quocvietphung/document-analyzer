@@ -1,37 +1,39 @@
 <div class="dashboard-wrapper">
-  <mat-card class="dashboard-card">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-item active">
+      <mat-icon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="dashboard-content">
     <h2 class="dashboard-title">Welcome to Document Management 📂</h2>
     <p class="dashboard-subtitle">
-      Manage your documents securely and efficiently
+      Manage your documents <b>securely</b> and efficiently
     </p>
 
-    <!-- Action buttons -->
-    <div class="dashboard-actions">
-      <button mat-raised-button color="primary" (click)="loadDocuments()">
-        📑 My Documents
-      </button>
+    <!-- Upload -->
+    <button mat-raised-button color="primary" (click)="fileInput.click()" class="upload-btn">
+      <mat-icon>cloud_upload</mat-icon>
+      Upload Document
+    </button>
+    <input type="file" hidden (change)="onFileSelected($event)" #fileInput />
 
-      <button mat-stroked-button color="accent" (click)="fileInput.click()">
-        ⬆️ Upload Document
-      </button>
-      <input type="file" hidden (change)="onFileSelected($event)" #fileInput />
-
-      <button mat-stroked-button color="warn" (click)="logout()">
-        🚪 Logout
-      </button>
+    <!-- Document List -->
+    <div class="document-list" *ngIf="documents.length > 0">
+      <h3>Your Documents</h3>
+      <mat-list>
+        <mat-list-item *ngFor="let doc of documents">
+          <mat-icon color="primary">description</mat-icon>
+          <span class="doc-info">{{ doc.fileName }}</span>
+          <small class="doc-type">{{ doc.documentType }}</small>
+          <button mat-icon-button color="warn" (click)="deleteDocument(doc.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-list-item>
+      </mat-list>
     </div>
-  </mat-card>
-
-  <!-- Document list -->
-  <mat-card class="document-list" *ngIf="documents.length > 0">
-    <h3>📑 Your Documents</h3>
-    <mat-list>
-      <mat-list-item *ngFor="let doc of documents">
-        <span>{{ doc.fileName }} ({{ doc.documentType }})</span>
-        <button mat-icon-button color="warn" (click)="deleteDocument(doc.id)">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </mat-list-item>
-    </mat-list>
-  </mat-card>
+  </main>
 </div>

@@ -12,10 +12,10 @@
 	</parent>
 
 	<groupId>orgaplan.beratung</groupId>
-	<artifactId>document-api</artifactId>
+	<artifactId>document-analyze</artifactId>
 	<version>1.0.1-SNAPSHOT</version>
-	<name>document-api</name>
-	<description>document-api</description>
+	<name>document-analyze</name>
+	<description>document-analyze</description>
 
 	<properties>
 		<java.version>21</java.version>

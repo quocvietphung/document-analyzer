@@ -73,3 +73,9 @@ Application runs at: [http://localhost:8080](http://localhost:8080)
 | GET    | `/api/documents/getUserDocuments?userId=...` | List all documents of a user  |
 
 ---
+
+## 🖼️ UI Preview
+
+Here is a preview of the demo UI for document management:
+
+![Document Management UI](demo/ui-preview.png)

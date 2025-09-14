@@ -2,19 +2,22 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
   standalone: true,
-  imports: [MatButtonModule, MatIconModule]
+  imports: [MatButtonModule, MatIconModule, NgIf]
 })
 export class NavbarComponent {
+  isCollapsed = false;
+
   constructor(private router: Router) {}
 
   toggleMenu() {
-    console.log('Menu clicked (sau này mở sidebar)');
+    this.isCollapsed = !this.isCollapsed;
   }
 
   logout() {

@@ -4,21 +4,17 @@
     Manage your documents <b>securely</b> and efficiently
   </p>
 
-  <!-- Upload -->
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="fileInput.click()"
-    class="upload-btn"
-  >
-    <mat-icon>cloud_upload</mat-icon>
-    Upload Document
-  </button>
-  <input type="file" hidden (change)="onFileSelected($event)" #fileInput />
-
   <!-- Document List -->
   <div class="document-list" *ngIf="documents.length > 0; else emptyState">
-    <h3>Your Documents</h3>
+    <div class="section-head">
+      <h3>Your Documents</h3>
+      <button mat-stroked-button color="primary" (click)="fileInput.click()">
+        <mat-icon>cloud_upload</mat-icon>
+        Upload
+      </button>
+      <input type="file" hidden (change)="onFileSelected($event)" #fileInput />
+    </div>
+
     <mat-list>
       <mat-list-item *ngFor="let doc of documents">
         <mat-icon color="primary">description</mat-icon>
@@ -41,6 +37,7 @@
         <mat-icon>upload</mat-icon>
         Upload now
       </button>
+      <input type="file" hidden (change)="onFileSelected($event)" #fileInput />
     </div>
   </ng-template>
 </main>

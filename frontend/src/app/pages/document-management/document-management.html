@@ -1,80 +1,75 @@
-<mat-sidenav-container class="dm-shell">
+<!-- Drive-style grid + lightbox preview -->
+<main class="document-management-content">
+  <h2 class="document-management-title">Your Documents 📑</h2>
+  <p class="document-management-subtitle">
+    Browse and preview your uploaded files
+  </p>
 
-  <!-- Main Content -->
-  <mat-sidenav-content>
-    <main class="document-management-content">
-      <h2 class="document-management-title">Your Documents 📑</h2>
-      <p class="document-management-subtitle">
-        Browse and preview your uploaded files
-      </p>
+  <!-- 1 input dùng chung -->
+  <button mat-raised-button color="primary" class="upload-btn" (click)="uploader.click()">
+    <mat-icon>cloud_upload</mat-icon>
+    Upload Document
+  </button>
+  <input #uploader type="file" hidden (change)="onFileSelected($event)" />
 
-      <!-- Upload button -->
-      <button mat-raised-button color="primary" class="upload-btn" (click)="uploader.click()">
-        <mat-icon>cloud_upload</mat-icon>
-        Upload Document
-      </button>
-      <input #uploader type="file" hidden (change)="onFileSelected($event)" />
-
-      <!-- Document cards -->
-      <div class="doc-cards" *ngIf="documents.length > 0; else emptyState">
-        <mat-card
-          class="doc-card"
-          *ngFor="let doc of documents"
-          (click)="viewDocument(doc)"
-        >
-          <mat-card-header>
-            <mat-icon mat-card-avatar color="primary">description</mat-icon>
-            <mat-card-title>{{ doc.fileName }}</mat-card-title>
-            <mat-card-subtitle>{{ doc.documentType || 'GENERAL' }}</mat-card-subtitle>
-          </mat-card-header>
-
-          <mat-card-actions align="end">
-            <button
-              mat-icon-button
-              color="warn"
-              (click)="$event.stopPropagation(); deleteDocument(doc.id)"
-              matTooltip="Delete"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
-          </mat-card-actions>
-        </mat-card>
+  <!-- GRID CARDS -->
+  <div class="drive-grid" *ngIf="documents.length > 0; else emptyState">
+    <div
+      class="drive-item"
+      *ngFor="let doc of documents"
+      (click)="viewDocument(doc)"
+    >
+      <div class="thumb">
+        <!-- Dùng icon PDF làm thumbnail giả lập; có thể thay bằng ảnh preview sau -->
+        <mat-icon>picture_as_pdf</mat-icon>
       </div>
 
-      <!-- Empty state -->
-      <ng-template #emptyState>
-        <div class="empty-card">
-          <mat-icon>folder_open</mat-icon>
-          <h4>No documents yet</h4>
-          <p>Upload your first file to get started.</p>
-        </div>
-      </ng-template>
-    </main>
-  </mat-sidenav-content>
+      <div class="meta">
+        <div class="name" [title]="doc.fileName">{{ doc.fileName }}</div>
+        <div class="type">{{ doc.documentType || 'PDF' }}</div>
+      </div>
 
-  <!-- PDF Viewer -->
-  <mat-sidenav
-    class="dm-viewer"
-    position="end"
-    mode="over"
-    [opened]="viewerOpen"
-    (closedStart)="onViewerClosed()"
-  >
-    <mat-toolbar class="viewer-toolbar" color="primary">
-      <span class="viewer-title">{{ viewerName }}</span>
+      <button
+        mat-icon-button
+        class="delete"
+        matTooltip="Delete"
+        (click)="$event.stopPropagation(); deleteDocument(doc.id)"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Empty -->
+  <ng-template #emptyState>
+    <div class="empty-card">
+      <mat-icon>folder_open</mat-icon>
+      <h4>No documents yet</h4>
+      <p>Upload your first file to get started.</p>
+    </div>
+  </ng-template>
+</main>
+
+<!-- LIGHTBOX VIEWER (giống Google Drive) -->
+<div class="viewer-overlay" *ngIf="viewerOpen">
+  <div class="backdrop" (click)="closeViewer()"></div>
+
+  <div class="viewer-dialog">
+    <div class="viewer-header">
+      <span class="title" [title]="viewerName">{{ viewerName }}</span>
       <span class="spacer"></span>
-      <button mat-icon-button (click)="openInNewTab()" matTooltip="Open in new tab">
+      <button mat-icon-button matTooltip="Open in new tab" (click)="openInNewTab()">
         <mat-icon>open_in_new</mat-icon>
       </button>
-      <button mat-icon-button (click)="downloadCurrent()" matTooltip="Download">
+      <button mat-icon-button matTooltip="Download" (click)="downloadCurrent()">
         <mat-icon>download</mat-icon>
       </button>
-      <button mat-icon-button (click)="closeViewer()" matTooltip="Close">
+      <button mat-icon-button matTooltip="Close" (click)="closeViewer()">
         <mat-icon>close</mat-icon>
       </button>
-    </mat-toolbar>
+    </div>
 
-    <div class="viewer-body">
+    <div class="viewer-content">
       <div class="viewer-loading" *ngIf="loadingViewer">
         <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
         <div>Loading PDF…</div>
@@ -87,5 +82,5 @@
         class="pdf-object"
       ></object>
     </div>
-  </mat-sidenav>
-</mat-sidenav-container>
+  </div>
+</div>

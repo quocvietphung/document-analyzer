@@ -10,7 +10,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-document-management',
   templateUrl: './document-management.html',
   styleUrls: ['./document-management.scss'],
   standalone: true,

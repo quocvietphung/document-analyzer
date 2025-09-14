@@ -1,4 +1,4 @@
-.dashboard-wrapper {
+.document-management-wrapper {
   display: flex;
   height: 100vh;
   background: linear-gradient(135deg, #e3f2fd, #bbdefb);
@@ -34,7 +34,7 @@
 }
 
 /* Main content */
-.dashboard-content {
+.document-management-content {
   flex: 1;
   padding: 3rem;
   display: flex;
@@ -43,13 +43,13 @@
   text-align: center;
 }
 
-.dashboard-title {
+.document-management-title {
   font-size: 2rem;
   font-weight: 600;
   color: #1976d2;
 }
 
-.dashboard-subtitle {
+.document-management-subtitle {
   margin: 0.8rem 0 2rem;
   color: #555;
   font-size: 1.1rem;

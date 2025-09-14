@@ -1,6 +1,6 @@
-# 📄 Document API
+# 📄 Document Analyze
 
-**Document API** is a backend service built with **Java 21** and **Spring Boot 3**.  
+**Document Analyze** is a backend service built with **Java 21** and **Spring Boot 3**.  
 It provides RESTful APIs to manage **users** and **documents**, including creating accounts, logging in, and uploading, viewing, and deleting documents.
 
 ---

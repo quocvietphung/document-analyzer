@@ -11,8 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
+  templateUrl: './document-management.html',
+  styleUrls: ['./document-management.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -22,7 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule
   ]
 })
-export class DashboardComponent implements OnInit {
+export class DocumentManagement implements OnInit {
   documents: any[] = [];
   userId: string | null = null;
 

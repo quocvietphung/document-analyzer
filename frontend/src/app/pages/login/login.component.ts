@@ -33,7 +33,7 @@ export class LoginComponent {
         localStorage.setItem('userId', res.user.id);
         localStorage.setItem('token', 'fake-token');
 
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/documents']);
       },
       error: (err) => {
         alert('Login failed: ' + (err.error?.message || err.message));

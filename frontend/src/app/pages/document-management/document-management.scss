@@ -67,7 +67,8 @@
   text-align: left;
 }
 
-.mat-list-item {
+/* Hỗ trợ cả list cũ & MDC mới */
+.mat-list-item, .mat-mdc-list-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -75,9 +76,7 @@
   border-bottom: 1px solid var(--border);
   transition: background 0.2s ease;
 
-  &:hover {
-    background: #fafbff;
-  }
+  &:hover { background: #fafbff; }
 }
 
 .doc-info {
@@ -85,6 +84,7 @@
   margin-left: 0.8rem;
   font-weight: 600;
   color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 .doc-type {
@@ -119,12 +119,6 @@
 
 /* Animation */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

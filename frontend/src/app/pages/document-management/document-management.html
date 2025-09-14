@@ -5,7 +5,6 @@
     Browse and preview your uploaded files
   </p>
 
-  <!-- 1 input dùng chung -->
   <button mat-raised-button color="primary" class="upload-btn" (click)="uploader.click()">
     <mat-icon>cloud_upload</mat-icon>
     Upload Document
@@ -20,7 +19,6 @@
       (click)="viewDocument(doc)"
     >
       <div class="thumb">
-        <!-- Dùng icon PDF làm thumbnail giả lập; có thể thay bằng ảnh preview sau -->
         <mat-icon>picture_as_pdf</mat-icon>
       </div>
 
@@ -50,7 +48,6 @@
   </ng-template>
 </main>
 
-<!-- LIGHTBOX VIEWER (giống Google Drive) -->
 <div class="viewer-overlay" *ngIf="viewerOpen">
   <div class="backdrop" (click)="closeViewer()"></div>
 

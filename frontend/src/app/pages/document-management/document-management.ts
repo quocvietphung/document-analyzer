@@ -87,7 +87,6 @@ export class DocumentManagement implements OnInit {
         }
       });
     }
-    // Clear input để chọn lại cùng tên file vẫn bắt event
     event.target.value = null;
   }
 
@@ -140,18 +139,5 @@ export class DocumentManagement implements OnInit {
 
   closeViewer(): void {
     this.viewerOpen = false;
-  }
-
-  onViewerClosed(): void {
-    if (this.viewerObjectUrl) {
-      URL.revokeObjectURL(this.viewerObjectUrl);
-      this.viewerObjectUrl = null;
-      this.viewerUrl = null;
-    }
-  }
-
-  logout(): void {
-    if (typeof window !== 'undefined') localStorage.clear();
-    this.router.navigate(['/login']);
   }
 }

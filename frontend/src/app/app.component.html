@@ -27,13 +27,11 @@
     </nav>
   </aside>
 
-  <!-- Main content -->
   <main class="app-content">
     <router-outlet></router-outlet>
   </main>
 </div>
 
-<!-- Login/Register (không cần sidebar) -->
 <div *ngIf="!showNavbar">
   <router-outlet></router-outlet>
 </div>

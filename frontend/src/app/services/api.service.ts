@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpResponse} from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -33,5 +33,13 @@ export class ApiService {
 
   uploadDocument(data: FormData): Observable<any> {
     return this.http.post(`${this.baseUrl}/documents/upload`, data);
+  }
+
+  viewDocument(documentId: string, userId: string): Observable<HttpResponse<Blob>> {
+    return this.http.get(`${this.baseUrl}/documents/view`, {
+      params: { documentId, userId },
+      observe: 'response',
+      responseType: 'blob'
+    });
   }
 }

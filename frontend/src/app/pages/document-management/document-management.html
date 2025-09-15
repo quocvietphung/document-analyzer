@@ -1,10 +1,10 @@
-<!-- Drive-style grid + lightbox preview -->
 <main class="document-management-content">
   <h2 class="document-management-title">Your Documents 📑</h2>
   <p class="document-management-subtitle">
     Browse and preview your uploaded files
   </p>
 
+  <!-- Upload -->
   <button mat-raised-button color="primary" class="upload-btn" (click)="uploader.click()">
     <mat-icon>cloud_upload</mat-icon>
     Upload Document
@@ -13,11 +13,7 @@
 
   <!-- GRID CARDS -->
   <div class="drive-grid" *ngIf="documents.length > 0; else emptyState">
-    <div
-      class="drive-item"
-      *ngFor="let doc of documents"
-      (click)="viewDocument(doc)"
-    >
+    <div class="drive-item" *ngFor="let doc of documents" (click)="viewDocument(doc)">
       <div class="thumb">
         <mat-icon>picture_as_pdf</mat-icon>
       </div>
@@ -27,6 +23,7 @@
         <div class="type">{{ doc.documentType || 'PDF' }}</div>
       </div>
 
+      <!-- Delete -->
       <button
         mat-icon-button
         class="delete"
@@ -34,6 +31,16 @@
         (click)="$event.stopPropagation(); deleteDocument(doc.id)"
       >
         <mat-icon>delete</mat-icon>
+      </button>
+
+      <!-- Analyze -->
+      <button
+        mat-icon-button
+        class="analyze"
+        matTooltip="Analyze"
+        (click)="$event.stopPropagation(); analyzeDocument(doc)"
+      >
+        <mat-icon>search</mat-icon>
       </button>
     </div>
   </div>
@@ -48,9 +55,9 @@
   </ng-template>
 </main>
 
+<!-- PDF Viewer -->
 <div class="viewer-overlay" *ngIf="viewerOpen">
   <div class="backdrop" (click)="closeViewer()"></div>
-
   <div class="viewer-dialog">
     <div class="viewer-header">
       <span class="title" [title]="viewerName">{{ viewerName }}</span>
@@ -65,19 +72,69 @@
         <mat-icon>close</mat-icon>
       </button>
     </div>
-
     <div class="viewer-content">
       <div class="viewer-loading" *ngIf="loadingViewer">
         <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
         <div>Loading PDF…</div>
       </div>
-
       <object
         *ngIf="!loadingViewer && viewerUrl"
         [data]="viewerUrl"
         type="application/pdf"
         class="pdf-object"
       ></object>
+    </div>
+  </div>
+</div>
+
+<!-- ANALYZE RESULT POPUP -->
+<div class="analyze-overlay" *ngIf="analyzeOpen">
+  <div class="backdrop" (click)="analyzeOpen=false"></div>
+  <div class="analyze-dialog">
+    <div class="header">
+      <span class="title">Analysis Result</span>
+      <span class="spacer"></span>
+      <button mat-icon-button (click)="analyzeOpen=false">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="content" *ngIf="analyzing">
+      <mat-progress-spinner mode="indeterminate" diameter="30"></mat-progress-spinner>
+      <div>Analyzing...</div>
+    </div>
+
+    <div class="content" *ngIf="!analyzing && analyzeResult">
+      <table class="result-table">
+        <tr>
+          <th>Customer Name</th>
+          <td>{{ analyzeResult.CustomerName || '-' }}</td>
+        </tr>
+        <tr>
+          <th>Invoice Date</th>
+          <td>{{ analyzeResult.InvoiceDate || '-' }}</td>
+        </tr>
+        <tr>
+          <th>Invoice Total</th>
+          <td>{{ analyzeResult.InvoiceTotal || '-' }}</td>
+        </tr>
+      </table>
+
+      <h4>Items</h4>
+      <table class="result-table items" *ngIf="analyzeResult.Items?.length > 0">
+        <tr>
+          <th>Description</th>
+          <th>Quantity</th>
+          <th>Unit Price</th>
+          <th>Amount</th>
+        </tr>
+        <tr *ngFor="let item of analyzeResult.Items">
+          <td>{{ item.Description }}</td>
+          <td>{{ item.Quantity }}</td>
+          <td>{{ item.UnitPrice }}</td>
+          <td>{{ item.Amount }}</td>
+        </tr>
+      </table>
     </div>
   </div>
 </div>

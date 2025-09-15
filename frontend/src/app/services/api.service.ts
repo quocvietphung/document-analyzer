@@ -42,4 +42,10 @@ export class ApiService {
       responseType: 'blob'
     });
   }
+
+  analyzeDocument(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<any>(`${this.baseUrl}/documents/analyze`, formData);
+  }
 }

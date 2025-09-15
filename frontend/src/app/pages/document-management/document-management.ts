@@ -1,4 +1,3 @@
-// src/app/pages/document-management/document-management.ts
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
@@ -45,6 +44,11 @@ export class DocumentManagement implements OnInit {
   private viewerObjectUrl: string | null = null;
   loadingViewer = false;
 
+  // Analyze state
+  analyzeOpen = false;
+  analyzing = false;
+  analyzeResult: any = null;
+
   constructor(
     private apiService: ApiService,
     private router: Router,
@@ -60,6 +64,7 @@ export class DocumentManagement implements OnInit {
     if (this.userId) this.loadDocuments();
   }
 
+  // ==== Load documents ====
   loadDocuments(): void {
     if (!this.userId) return;
     this.apiService.getUserDocuments(this.userId).subscribe({
@@ -71,6 +76,7 @@ export class DocumentManagement implements OnInit {
     });
   }
 
+  // ==== Upload document ====
   onFileSelected(event: any): void {
     const file: File = event.target.files?.[0];
     if (file && this.userId) {
@@ -90,6 +96,7 @@ export class DocumentManagement implements OnInit {
     event.target.value = null;
   }
 
+  // ==== Delete document ====
   deleteDocument(docId: string): void {
     if (!this.userId) return;
     this.apiService.deleteDocument(docId, this.userId).subscribe({
@@ -101,7 +108,7 @@ export class DocumentManagement implements OnInit {
     });
   }
 
-  // ==== PDF Viewer actions ====
+  // ==== Open viewer ====
   viewDocument(doc: { id: string; fileName: string }): void {
     if (!this.userId) return;
     this.loadingViewer = true;
@@ -139,5 +146,55 @@ export class DocumentManagement implements OnInit {
 
   closeViewer(): void {
     this.viewerOpen = false;
+  }
+
+  // ==== Analyze document ====
+  analyzeDocument(doc: { id: string; fileName: string }): void {
+    if (!this.userId) return;
+    this.analyzing = true;
+    this.analyzeOpen = true;
+
+    this.apiService.viewDocument(doc.id, this.userId).subscribe({
+      next: (res) => {
+        const blob = res.body as Blob;
+        const file = new File([blob], doc.fileName, { type: blob.type });
+
+        this.apiService.analyzeDocument(file).subscribe({
+          next: (res) => {
+            console.log("✅ Raw Azure result:", res);
+            this.analyzeResult = this.mapInvoiceResult(res.analyzeResult);
+            this.analyzing = false;
+          },
+          error: (err) => {
+            this.analyzing = false;
+            console.error("❌ Analyze failed:", err);
+            this.snack.open(err.error?.message || 'Analyze failed', 'Close', { duration: 3000 });
+          }
+        });
+      },
+      error: (err) => {
+        this.analyzing = false;
+        console.error('❌ Could not fetch file:', err);
+        this.snack.open('Could not fetch file', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  // Map Azure JSON → UI model
+  private mapInvoiceResult(result: any) {
+    const doc = result?.documents?.[0] || {};
+    const fields = doc.fields || {};
+
+    return {
+      CustomerName: fields.CustomerName?.content || '-',
+      InvoiceDate: fields.InvoiceDate?.valueDate || fields.InvoiceDate?.content || '-',
+      InvoiceTotal: fields.InvoiceTotal?.valueNumber || fields.InvoiceTotal?.content || '-',
+      Items: (fields.Items?.valueArray || []).map((item: any) => ({
+        Description: item.valueObject?.Description?.content || '-',
+        Quantity: item.valueObject?.Quantity?.valueNumber || item.valueObject?.Quantity?.content || '-',
+        UnitPrice: item.valueObject?.UnitPrice?.valueNumber || item.valueObject?.UnitPrice?.content || '-',
+        Amount: item.valueObject?.Amount?.valueNumber || item.valueObject?.Amount?.content || '-'
+      }))
+    };
   }
 }

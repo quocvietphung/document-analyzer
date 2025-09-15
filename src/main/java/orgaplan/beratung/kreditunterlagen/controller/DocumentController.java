@@ -8,6 +8,7 @@ import orgaplan.beratung.kreditunterlagen.model.User;
 import orgaplan.beratung.kreditunterlagen.repository.DocumentRepository;
 import orgaplan.beratung.kreditunterlagen.request.FileDownloadRequest;
 import orgaplan.beratung.kreditunterlagen.response.DocumentResponse;
+import orgaplan.beratung.kreditunterlagen.service.AzureFormRecognizerService;
 import orgaplan.beratung.kreditunterlagen.service.DocumentService;
 import orgaplan.beratung.kreditunterlagen.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,6 +106,18 @@ public class DocumentController {
             return ResponseEntity.ok().body("Document deleted successfully");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Document not found or user is not authorized");
+        }
+    }
+
+    @Autowired
+    private AzureFormRecognizerService azureFormRecognizerService;
+
+    @PostMapping("/analyze")
+    public ResponseEntity<?> analyzeDocument(@RequestParam("file") MultipartFile file) {
+        try {
+            return ResponseEntity.ok(azureFormRecognizerService.analyzeDocument(file));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

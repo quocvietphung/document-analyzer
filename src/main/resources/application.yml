@@ -25,3 +25,9 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
+
+azure:
+  document:
+    endpoint: ${FORM_ENDPOINT}
+    key: ${FORM_KEY}
+    model-id: ${MODEL_ID}

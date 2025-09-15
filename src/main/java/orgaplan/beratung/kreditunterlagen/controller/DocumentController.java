@@ -115,9 +115,6 @@ public class DocumentController {
     @PostMapping("/analyze")
     public ResponseEntity<?> analyzeDocument(@RequestParam("file") MultipartFile file) {
         try {
-            System.out.println("📂 Received file for analyze: " + file.getOriginalFilename() +
-                    " (size: " + file.getSize() + " bytes)");
-
             return ResponseEntity.ok(azureFormRecognizerService.analyzeDocument(file));
         } catch (Exception e) {
             Map<String, Object> error = new HashMap<>();

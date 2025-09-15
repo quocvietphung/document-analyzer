@@ -64,7 +64,7 @@ export class DocumentManagement implements OnInit {
     if (this.userId) this.loadDocuments();
   }
 
-  // ==== Load user documents ====
+  // ==== Load documents ====
   loadDocuments(): void {
     if (!this.userId) return;
     this.apiService.getUserDocuments(this.userId).subscribe({
@@ -76,7 +76,7 @@ export class DocumentManagement implements OnInit {
     });
   }
 
-  // ==== Upload ====
+  // ==== Upload document ====
   onFileSelected(event: any): void {
     const file: File = event.target.files?.[0];
     if (file && this.userId) {
@@ -96,7 +96,7 @@ export class DocumentManagement implements OnInit {
     event.target.value = null;
   }
 
-  // ==== Delete ====
+  // ==== Delete document ====
   deleteDocument(docId: string): void {
     if (!this.userId) return;
     this.apiService.deleteDocument(docId, this.userId).subscribe({
@@ -108,7 +108,7 @@ export class DocumentManagement implements OnInit {
     });
   }
 
-  // ==== Viewer ====
+  // ==== Open viewer ====
   viewDocument(doc: { id: string; fileName: string }): void {
     if (!this.userId) return;
     this.loadingViewer = true;
@@ -148,7 +148,7 @@ export class DocumentManagement implements OnInit {
     this.viewerOpen = false;
   }
 
-  // ==== Analyze ====
+  // ==== Analyze document ====
   analyzeDocument(doc: { id: string; fileName: string }): void {
     if (!this.userId) return;
     this.analyzing = true;
@@ -180,13 +180,13 @@ export class DocumentManagement implements OnInit {
     });
   }
 
-  // Map Azure JSON -> UI model
+  // Map Azure JSON → UI model
   private mapInvoiceResult(result: any) {
     const doc = result?.documents?.[0] || {};
     const fields = doc.fields || {};
 
     return {
-      CustomerName: fields.CustomerName?.content || '-',   // text → content
+      CustomerName: fields.CustomerName?.content || '-',
       InvoiceDate: fields.InvoiceDate?.valueDate || fields.InvoiceDate?.content || '-',
       InvoiceTotal: fields.InvoiceTotal?.valueNumber || fields.InvoiceTotal?.content || '-',
       Items: (fields.Items?.valueArray || []).map((item: any) => ({

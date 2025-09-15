@@ -152,49 +152,48 @@ export class DocumentManagement implements OnInit {
   analyzeDocument(doc: { id: string; fileName: string }): void {
     if (!this.userId) return;
     this.analyzing = true;
-    this.analyzeOpen = true; // mở popup luôn để user thấy "Analyzing..."
 
-    // Lấy file PDF từ backend trước
     this.apiService.viewDocument(doc.id, this.userId).subscribe({
       next: (res) => {
         const blob = res.body as Blob;
         const file = new File([blob], doc.fileName, { type: blob.type });
 
-        // Gửi sang API /analyze
         this.apiService.analyzeDocument(file).subscribe({
           next: (res) => {
-            console.log("✅ Analyze result (raw):", res);
-            this.analyzeResult = this.mapInvoiceResult(res); // map kết quả
+            console.log("✅ Raw Azure result:", res);
+            this.analyzeResult = this.mapInvoiceResult(res.analyzeResult);  // <== dùng hàm map
             this.analyzing = false;
+            this.analyzeOpen = true;
           },
           error: (err) => {
+            this.analyzing = false;
             console.error("❌ Analyze failed:", err);
             this.snack.open(err.error?.message || 'Analyze failed', 'Close', { duration: 3000 });
-            this.analyzing = false;
           }
         });
       },
       error: (err) => {
+        this.analyzing = false;
         console.error('❌ Could not fetch file:', err);
         this.snack.open('Could not fetch file', 'Close', { duration: 3000 });
-        this.analyzing = false;
       }
     });
   }
 
-  // Map kết quả Invoice về bảng dễ đọc
-  private mapInvoiceResult(raw: any) {
-    const doc = raw.documents?.[0] || {};
+// Map Azure JSON -> UI model
+  private mapInvoiceResult(result: any) {
+    const doc = result?.documents?.[0] || {};
     const fields = doc.fields || {};
+
     return {
-      CustomerName: fields.CustomerName?.value || '',
-      InvoiceDate: fields.InvoiceDate?.value || '',
-      InvoiceTotal: fields.InvoiceTotal?.content || '',
+      CustomerName: fields.CustomerName?.value || '-',
+      InvoiceDate: fields.InvoiceDate?.value || '-',
+      InvoiceTotal: fields.InvoiceTotal?.content || '-',
       Items: (fields.Items?.valueArray || []).map((item: any) => ({
-        Description: item.value?.Description?.content || '',
-        Quantity: item.value?.Quantity?.content || '',
-        UnitPrice: item.value?.UnitPrice?.content || '',
-        Amount: item.value?.Amount?.content || ''
+        Description: item.valueObject?.Description?.content || '-',
+        Quantity: item.valueObject?.Quantity?.content || '-',
+        UnitPrice: item.valueObject?.UnitPrice?.content || '-',
+        Amount: item.valueObject?.Amount?.content || '-'
       }))
     };
   }

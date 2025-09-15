@@ -60,7 +60,6 @@
   color: var(--muted);
 }
 
-/* Upload button (áp cho mat-raised-button) */
 .upload-btn {
   border-radius: 999px;
   font-weight: 700;
@@ -222,8 +221,8 @@
   position: absolute;
   inset: 50% auto auto 50%;
   transform: translate(-50%, -50%) scale(.98);
-  width: min(1800px, 98vw);   /* rộng tối đa 1800px */
-  height: 92vh;               /* thoáng phía trên/dưới */
+  width: min(1800px, 98vw);
+  height: 92vh;
   background: #fff;
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -265,7 +264,6 @@
     background: #2c2f35;
   }
 
-  /* Scrollbar (nếu PDF render bên trong có scroll) */
   &::-webkit-scrollbar { width: 10px; height: 10px; }
   &::-webkit-scrollbar-thumb { background: #bfc6d9; border-radius: 10px; }
   &::-webkit-scrollbar-thumb:hover { background: #a9b2cc; }
@@ -284,8 +282,8 @@
   position: absolute;
   inset: 50% auto auto 50%;
   transform: translate(-50%, -50%) scale(.98);
-  width: min(1400px, 98vw);   /* rộng tối đa 1400px */
-  max-height: 96vh;           /* cao tối đa 96vh */
+  width: min(1400px, 98vw);
+  max-height: 96vh;
   background: #fff;
   border-radius: var(--radius-md);
   overflow: auto;
@@ -334,7 +332,6 @@
   }
 }
 
-/* Bảng kết quả */
 .result-table {
   width: 100%;
   border-collapse: collapse;

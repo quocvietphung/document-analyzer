@@ -4,6 +4,7 @@
     Browse and preview your uploaded files
   </p>
 
+  <!-- Upload -->
   <button mat-raised-button color="primary" class="upload-btn" (click)="uploader.click()">
     <mat-icon>cloud_upload</mat-icon>
     Upload Document
@@ -12,11 +13,7 @@
 
   <!-- GRID CARDS -->
   <div class="drive-grid" *ngIf="documents.length > 0; else emptyState">
-    <div
-      class="drive-item"
-      *ngFor="let doc of documents"
-      (click)="viewDocument(doc)"
-    >
+    <div class="drive-item" *ngFor="let doc of documents" (click)="viewDocument(doc)">
       <div class="thumb">
         <mat-icon>picture_as_pdf</mat-icon>
       </div>
@@ -101,6 +98,14 @@
         <mat-icon>close</mat-icon>
       </button>
     </div>
+
+    <!-- Loading -->
+    <div class="content" *ngIf="analyzing">
+      <mat-progress-spinner mode="indeterminate" diameter="30"></mat-progress-spinner>
+      <div>Analyzing...</div>
+    </div>
+
+    <!-- Kết quả -->
     <div class="content" *ngIf="!analyzing && analyzeResult">
       <table class="result-table">
         <tr>
@@ -133,6 +138,5 @@
         </tr>
       </table>
     </div>
-    <div class="content" *ngIf="analyzing">Analyzing...</div>
   </div>
 </div>

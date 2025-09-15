@@ -152,6 +152,7 @@ export class DocumentManagement implements OnInit {
   analyzeDocument(doc: { id: string; fileName: string }): void {
     if (!this.userId) return;
     this.analyzing = true;
+    this.analyzeOpen = true; // mở popup luôn để user thấy "Analyzing..."
 
     // Lấy file PDF từ backend trước
     this.apiService.viewDocument(doc.id, this.userId).subscribe({
@@ -162,19 +163,21 @@ export class DocumentManagement implements OnInit {
         // Gửi sang API /analyze
         this.apiService.analyzeDocument(file).subscribe({
           next: (res) => {
-            console.log("✅ Analyze result:", res);
-            this.analyzeResult = res;
-            this.analyzeOpen = true;
+            console.log("✅ Analyze result (raw):", res);
+            this.analyzeResult = this.mapInvoiceResult(res); // map kết quả
+            this.analyzing = false;
           },
           error: (err) => {
             console.error("❌ Analyze failed:", err);
             this.snack.open(err.error?.message || 'Analyze failed', 'Close', { duration: 3000 });
+            this.analyzing = false;
           }
         });
       },
       error: (err) => {
         console.error('❌ Could not fetch file:', err);
         this.snack.open('Could not fetch file', 'Close', { duration: 3000 });
+        this.analyzing = false;
       }
     });
   }

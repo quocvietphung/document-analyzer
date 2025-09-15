@@ -117,7 +117,10 @@ public class DocumentController {
         try {
             return ResponseEntity.ok(azureFormRecognizerService.analyzeDocument(file));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", true);
+            error.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
 }

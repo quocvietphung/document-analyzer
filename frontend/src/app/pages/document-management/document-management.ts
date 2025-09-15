@@ -1,4 +1,3 @@
-// src/app/pages/document-management/document-management.ts
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
@@ -44,6 +43,11 @@ export class DocumentManagement implements OnInit {
   viewerUrl: SafeResourceUrl | null = null;
   private viewerObjectUrl: string | null = null;
   loadingViewer = false;
+
+  // Analyze state
+  analyzeOpen = false;
+  analyzing = false;
+  analyzeResult: any = null;
 
   constructor(
     private apiService: ApiService,
@@ -139,5 +143,53 @@ export class DocumentManagement implements OnInit {
 
   closeViewer(): void {
     this.viewerOpen = false;
+  }
+
+  // ==== Analyze ====
+  analyzeDocument(doc: { id: string; fileName: string }): void {
+    if (!this.userId) return;
+    this.analyzing = true;
+
+    // Lấy file PDF từ backend trước
+    this.apiService.viewDocument(doc.id, this.userId).subscribe({
+      next: (res) => {
+        const blob = res.body as Blob;
+        const file = new File([blob], doc.fileName, { type: blob.type });
+
+        // Gửi sang API /analyze
+        this.apiService.analyzeDocument(file).subscribe({
+          next: (result) => {
+            this.analyzeResult = this.mapInvoiceResult(result);
+            this.analyzeOpen = true;
+            this.analyzing = false;
+          },
+          error: (err) => {
+            console.error('❌ Analyze failed:', err);
+            this.snack.open('Analyze failed', 'Close', { duration: 3000 });
+            this.analyzing = false;
+          }
+        });
+      },
+      error: (err) => {
+        console.error('❌ Could not fetch file:', err);
+        this.snack.open('Could not fetch file', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  private mapInvoiceResult(raw: any) {
+    const doc = raw.documents?.[0] || {};
+    const fields = doc.fields || {};
+    return {
+      CustomerName: fields.CustomerName?.value || '',
+      InvoiceDate: fields.InvoiceDate?.value || '',
+      InvoiceTotal: fields.InvoiceTotal?.content || '',
+      Items: (fields.Items?.valueArray || []).map((item: any) => ({
+        Description: item.value?.Description?.content || '',
+        Quantity: item.value?.Quantity?.content || '',
+        UnitPrice: item.value?.UnitPrice?.content || '',
+        Amount: item.value?.Amount?.content || ''
+      }))
+    };
   }
 }

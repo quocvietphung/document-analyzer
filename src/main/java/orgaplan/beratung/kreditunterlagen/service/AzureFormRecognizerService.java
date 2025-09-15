@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import orgaplan.beratung.kreditunterlagen.config.AzureFormRecognizerConfig;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +15,7 @@ public class AzureFormRecognizerService {
 
     private final AzureFormRecognizerConfig config;
     private final RestTemplate restTemplate = new RestTemplate();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public AzureFormRecognizerService(AzureFormRecognizerConfig config) {
         this.config = config;
@@ -24,13 +27,19 @@ public class AzureFormRecognizerService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Ocp-Apim-Subscription-Key", config.getKey());
-        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM); // Azure yêu cầu application/octet-stream
 
         HttpEntity<byte[]> requestEntity = new HttpEntity<>(file.getBytes(), headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+        try {
+            ResponseEntity<String> response =
+                    restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readTree(response.getBody());
+            return mapper.readTree(response.getBody());
+        } catch (HttpClientErrorException | HttpServerErrorException ex) {
+            // In chi tiết lỗi từ Azure
+            System.err.println("Azure Form Recognizer error: " + ex.getResponseBodyAsString());
+            throw ex;
+        }
     }
 }

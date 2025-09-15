@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import orgaplan.beratung.kreditunterlagen.config.AzureFormRecognizerConfig;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,23 +29,21 @@ public class AzureFormRecognizerService {
 
         HttpEntity<byte[]> requestEntity = new HttpEntity<>(file.getBytes(), headers);
 
-        // Step 1: Gửi file -> nhận 202 Accepted + operation-location
+        // Step 1: send file and get Operation-Location
         ResponseEntity<String> response =
                 restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
         String operationLocation = response.getHeaders().getFirst("operation-location");
-        System.out.println("📍 Operation-Location: " + operationLocation);
 
-        // Step 2: Poll kết quả
+        // Step 2: poll for results until success or failure
         int maxRetries = 10;
-        int delay = 2000; // 2s
+        int delay = 2000; // 2 seconds
         for (int i = 0; i < maxRetries; i++) {
             ResponseEntity<String> pollResponse =
                     restTemplate.exchange(operationLocation, HttpMethod.GET, new HttpEntity<>(headers), String.class);
 
             JsonNode result = mapper.readTree(pollResponse.getBody());
             String status = result.get("status").asText();
-            System.out.println("⏳ Polling attempt " + (i+1) + ": " + status);
 
             if ("succeeded".equalsIgnoreCase(status) || "failed".equalsIgnoreCase(status)) {
                 return result;

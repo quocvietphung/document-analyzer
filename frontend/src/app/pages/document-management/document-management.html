@@ -99,13 +99,11 @@
       </button>
     </div>
 
-    <!-- Loading -->
     <div class="content" *ngIf="analyzing">
       <mat-progress-spinner mode="indeterminate" diameter="30"></mat-progress-spinner>
       <div>Analyzing...</div>
     </div>
 
-    <!-- Kết quả -->
     <div class="content" *ngIf="!analyzing && analyzeResult">
       <table class="result-table">
         <tr>

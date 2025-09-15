@@ -64,6 +64,7 @@ export class DocumentManagement implements OnInit {
     if (this.userId) this.loadDocuments();
   }
 
+  // ==== Load user documents ====
   loadDocuments(): void {
     if (!this.userId) return;
     this.apiService.getUserDocuments(this.userId).subscribe({
@@ -75,6 +76,7 @@ export class DocumentManagement implements OnInit {
     });
   }
 
+  // ==== Upload ====
   onFileSelected(event: any): void {
     const file: File = event.target.files?.[0];
     if (file && this.userId) {
@@ -94,6 +96,7 @@ export class DocumentManagement implements OnInit {
     event.target.value = null;
   }
 
+  // ==== Delete ====
   deleteDocument(docId: string): void {
     if (!this.userId) return;
     this.apiService.deleteDocument(docId, this.userId).subscribe({
@@ -105,7 +108,7 @@ export class DocumentManagement implements OnInit {
     });
   }
 
-  // ==== PDF Viewer actions ====
+  // ==== Viewer ====
   viewDocument(doc: { id: string; fileName: string }): void {
     if (!this.userId) return;
     this.loadingViewer = true;
@@ -158,15 +161,14 @@ export class DocumentManagement implements OnInit {
 
         // Gửi sang API /analyze
         this.apiService.analyzeDocument(file).subscribe({
-          next: (result) => {
-            this.analyzeResult = this.mapInvoiceResult(result);
+          next: (res) => {
+            console.log("✅ Analyze result:", res);
+            this.analyzeResult = res;
             this.analyzeOpen = true;
-            this.analyzing = false;
           },
           error: (err) => {
-            console.error('❌ Analyze failed:', err);
-            this.snack.open('Analyze failed', 'Close', { duration: 3000 });
-            this.analyzing = false;
+            console.error("❌ Analyze failed:", err);
+            this.snack.open(err.error?.message || 'Analyze failed', 'Close', { duration: 3000 });
           }
         });
       },
@@ -177,6 +179,7 @@ export class DocumentManagement implements OnInit {
     });
   }
 
+  // Map kết quả Invoice về bảng dễ đọc
   private mapInvoiceResult(raw: any) {
     const doc = raw.documents?.[0] || {};
     const fields = doc.fields || {};

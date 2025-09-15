@@ -115,11 +115,15 @@ public class DocumentController {
     @PostMapping("/analyze")
     public ResponseEntity<?> analyzeDocument(@RequestParam("file") MultipartFile file) {
         try {
+            System.out.println("📂 Received file for analyze: " + file.getOriginalFilename() +
+                    " (size: " + file.getSize() + " bytes)");
+
             return ResponseEntity.ok(azureFormRecognizerService.analyzeDocument(file));
         } catch (Exception e) {
             Map<String, Object> error = new HashMap<>();
             error.put("error", true);
             error.put("message", e.getMessage());
+            System.err.println("❌ Analyze failed: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }

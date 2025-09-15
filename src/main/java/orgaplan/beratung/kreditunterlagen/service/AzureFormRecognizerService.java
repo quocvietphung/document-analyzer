@@ -25,9 +25,15 @@ public class AzureFormRecognizerService {
         String url = config.getEndpoint() + "/formrecognizer/documentModels/"
                 + config.getModelId() + ":analyze?api-version=2023-07-31";
 
+        // 🔎 Debug log
+        System.out.println("🔗 Calling Azure: " + url);
+        System.out.println("🔑 Key: " + config.getKey().substring(0, 5) + "...");
+        System.out.println("📄 File name: " + file.getOriginalFilename());
+        System.out.println("📄 File size: " + file.getSize() + " bytes");
+
         HttpHeaders headers = new HttpHeaders();
         headers.set("Ocp-Apim-Subscription-Key", config.getKey());
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM); // Azure yêu cầu application/octet-stream
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM); // Azure expects binary
 
         HttpEntity<byte[]> requestEntity = new HttpEntity<>(file.getBytes(), headers);
 
@@ -35,10 +41,10 @@ public class AzureFormRecognizerService {
             ResponseEntity<String> response =
                     restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
+            System.out.println("✅ Azure response: " + response.getStatusCode());
             return mapper.readTree(response.getBody());
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
-            // In chi tiết lỗi từ Azure
-            System.err.println("Azure Form Recognizer error: " + ex.getResponseBodyAsString());
+            System.err.println("❌ Azure Form Recognizer error: " + ex.getResponseBodyAsString());
             throw ex;
         }
     }

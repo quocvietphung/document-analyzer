@@ -43,9 +43,9 @@ export class ApiService {
     });
   }
 
-  analyzeDocument(file: File): Observable<any> {
+  analyzeDocument(file: File) {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post(`${this.baseUrl}/documents/analyze`, formData);
+    return this.http.post<any>(`${this.baseUrl}/documents/analyze`, formData);
   }
 }

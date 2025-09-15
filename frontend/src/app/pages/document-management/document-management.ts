@@ -152,6 +152,7 @@ export class DocumentManagement implements OnInit {
   analyzeDocument(doc: { id: string; fileName: string }): void {
     if (!this.userId) return;
     this.analyzing = true;
+    this.analyzeOpen = true;
 
     this.apiService.viewDocument(doc.id, this.userId).subscribe({
       next: (res) => {
@@ -161,9 +162,8 @@ export class DocumentManagement implements OnInit {
         this.apiService.analyzeDocument(file).subscribe({
           next: (res) => {
             console.log("✅ Raw Azure result:", res);
-            this.analyzeResult = this.mapInvoiceResult(res.analyzeResult);  // <== dùng hàm map
+            this.analyzeResult = this.mapInvoiceResult(res.analyzeResult);
             this.analyzing = false;
-            this.analyzeOpen = true;
           },
           error: (err) => {
             this.analyzing = false;
@@ -180,20 +180,20 @@ export class DocumentManagement implements OnInit {
     });
   }
 
-// Map Azure JSON -> UI model
+  // Map Azure JSON -> UI model
   private mapInvoiceResult(result: any) {
     const doc = result?.documents?.[0] || {};
     const fields = doc.fields || {};
 
     return {
-      CustomerName: fields.CustomerName?.value || '-',
-      InvoiceDate: fields.InvoiceDate?.value || '-',
-      InvoiceTotal: fields.InvoiceTotal?.content || '-',
+      CustomerName: fields.CustomerName?.content || '-',   // text → content
+      InvoiceDate: fields.InvoiceDate?.valueDate || fields.InvoiceDate?.content || '-',
+      InvoiceTotal: fields.InvoiceTotal?.valueNumber || fields.InvoiceTotal?.content || '-',
       Items: (fields.Items?.valueArray || []).map((item: any) => ({
         Description: item.valueObject?.Description?.content || '-',
-        Quantity: item.valueObject?.Quantity?.content || '-',
-        UnitPrice: item.valueObject?.UnitPrice?.content || '-',
-        Amount: item.valueObject?.Amount?.content || '-'
+        Quantity: item.valueObject?.Quantity?.valueNumber || item.valueObject?.Quantity?.content || '-',
+        UnitPrice: item.valueObject?.UnitPrice?.valueNumber || item.valueObject?.UnitPrice?.content || '-',
+        Amount: item.valueObject?.Amount?.valueNumber || item.valueObject?.Amount?.content || '-'
       }))
     };
   }

@@ -11,22 +11,19 @@ export class ApiService {
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/users/login`, { email, password });
+    return this.http.post(`${this.baseUrl}/auth/login`, { email, password });
   }
 
   register(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/users/create`, data);
   }
 
-  getUserDocuments(userId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/documents/getUserDocuments`, {
-      params: { userId }
-    });
+  getUserDocuments(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/documents/getUserDocuments`);
   }
 
-  deleteDocument(documentId: string, userId: string): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/documents/delete`, {
-      params: { documentId, userId },
+  deleteDocument(documentId: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/documents/${documentId}`, {
       responseType: 'text'
     });
   }
@@ -35,9 +32,8 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/documents/upload`, data);
   }
 
-  viewDocument(documentId: string, userId: string): Observable<HttpResponse<Blob>> {
-    return this.http.get(`${this.baseUrl}/documents/view`, {
-      params: { documentId, userId },
+  viewDocument(documentId: string): Observable<HttpResponse<Blob>> {
+    return this.http.get(`${this.baseUrl}/documents/${documentId}/view`, {
       observe: 'response',
       responseType: 'blob'
     });

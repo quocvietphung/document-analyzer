@@ -29,10 +29,18 @@ public class UserController {
         return ResponseEntity.ok(Map.of("user", user));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
-        User user = userService.login(request.getEmail(), request.getPassword());
-        return ResponseEntity.ok(Map.of("user", user));
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser() {
+        org.springframework.security.core.Authentication authentication = 
+            org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        String userId = authentication.getName();
+        User user = userService.findUserById(userId);
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping

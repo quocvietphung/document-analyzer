@@ -69,8 +69,9 @@ jwt:
   expiration: ${JWT_EXPIRATION_MS:3600000}
   refresh-expiration: ${JWT_REFRESH_EXPIRATION_MS:86400000}
 
-# Keycloak Configuration
+# Keycloak Configuration (disabled, configured for future SSO)
 keycloak:
+  enabled: false
   auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://localhost:8081}
   realm: ${KEYCLOAK_REALM:document-analyzer}
   resource: ${KEYCLOAK_RESOURCE:document-analyzer-client}

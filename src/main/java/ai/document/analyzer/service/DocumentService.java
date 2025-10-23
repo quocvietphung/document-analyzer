@@ -165,8 +165,21 @@ public class DocumentService {
 
     public Resource loadFileAsResource(FileDownloadRequest fileRequest) {
         try {
-            String storedFileName = fileRequest.getDocumentId() + ".pdf";
-            Path filePath = Paths.get(Types.UPLOADED_FOLDER_DOCUMENT, storedFileName).normalize();
+            // Validate document ID to prevent path traversal
+            String documentId = fileRequest.getDocumentId();
+            if (documentId == null || documentId.contains("..") || documentId.contains("/") || documentId.contains("\\")) {
+                throw new IllegalArgumentException("Invalid document ID");
+            }
+            
+            String storedFileName = documentId + ".pdf";
+            Path uploadDir = Paths.get(Types.UPLOADED_FOLDER_DOCUMENT).toAbsolutePath().normalize();
+            Path filePath = uploadDir.resolve(storedFileName).normalize();
+            
+            // Ensure the resolved path is still within the upload directory
+            if (!filePath.startsWith(uploadDir)) {
+                throw new IllegalArgumentException("Invalid file path - potential path traversal attack");
+            }
+            
             Resource resource = new UrlResource(filePath.toUri());
 
             if (!resource.exists()) {

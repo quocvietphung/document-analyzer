@@ -22,8 +22,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import com.itextpdf.text.Image;
-import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import static ai.document.analyzer.Types.UPLOADED_FOLDER_DOCUMENT;
 import static ai.document.analyzer.util.Util.changeExtensionToPdf;
@@ -38,15 +41,20 @@ public class DocumentService {
     private DocumentRepository documentRepository;
 
     private void convertImageToPdf(MultipartFile file, Path outputPath) {
-        com.itextpdf.text.Document document = new com.itextpdf.text.Document();
-        try {
-            PdfWriter.getInstance(document, new FileOutputStream(outputPath.toFile()));
-            document.open();
-            Image image = Image.getInstance(file.getBytes());
-            image.scaleToFit(document.getPageSize());
-            image.setAlignment(Image.ALIGN_CENTER);
-            document.add(image);
-            document.close();
+        try (PDDocument document = new PDDocument()) {
+            PDImageXObject image = PDImageXObject.createFromByteArray(document, file.getBytes(), file.getOriginalFilename());
+            
+            // Create a page with the same dimensions as the image
+            PDRectangle pageSize = new PDRectangle(image.getWidth(), image.getHeight());
+            PDPage page = new PDPage(pageSize);
+            document.addPage(page);
+            
+            // Add the image to the page
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                contentStream.drawImage(image, 0, 0, image.getWidth(), image.getHeight());
+            }
+            
+            document.save(outputPath.toFile());
         } catch (Exception e) {
             throw new RuntimeException("Error converting image to PDF: " + e.getMessage(), e);
         }

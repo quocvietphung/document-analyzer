@@ -32,6 +32,12 @@ public class Document {
     @Column(name = "file_name", length = 255)
     private String fileName;
 
+    @Column(name = "blob_url", length = 512)
+    private String blobUrl;
+
+    @Column(name = "storage_type", length = 20)
+    private String storageType; // "LOCAL" or "AZURE_BLOB"
+
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 

@@ -86,7 +86,7 @@ It provides RESTful APIs and modern UI for document upload, AI-powered analysis,
 
 3. **Start all services**
    ```bash
-   docker compose -f docker-compose.full.yml up -d
+   docker compose -f docker-compose.yml up -d
    ```
 
 4. **Access the applications**
@@ -270,7 +270,7 @@ docker build -t document-analyzer-frontend ./frontend
 
 ### Full Stack Deployment
 ```bash
-docker compose -f docker-compose.full.yml up -d
+docker compose -f docker-compose.yml up -d
 ```
 
 This starts:
@@ -282,13 +282,13 @@ This starts:
 ### Individual Services
 ```bash
 # Start only backend and database
-docker compose -f docker-compose.full.yml up -d mysql backend
+docker compose -f docker-compose.yml up -d mysql backend
 
 # View logs
-docker compose -f docker-compose.full.yml logs -f backend
+docker compose -f docker-compose.yml logs -f backend
 
 # Stop all services
-docker compose -f docker-compose.full.yml down
+docker compose -f docker-compose.yml down
 ```
 
 ---

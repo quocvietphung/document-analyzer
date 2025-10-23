@@ -179,7 +179,7 @@ spring:
 
 ### Docker (Recommended)
 ```bash
-docker compose -f docker-compose.full.yml up -d
+docker compose -f docker-compose.yml up -d
 ```
 
 ### Local Development

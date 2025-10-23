@@ -1,8 +1,11 @@
+server:
+  port: ${SERVER_PORT:8080}
+
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/documents
-    username: root
-    password: 12345678
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:smartdocs}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:changeme}
     hikari:
       maximum-pool-size: 20
       minimum-idle: 5
@@ -14,20 +17,86 @@ spring:
     hibernate:
       ddl-auto: none
     open-in-view: false
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
 
   flyway:
     baseline-on-migrate: true
+    enabled: true
 
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE:dev}
 
   servlet:
     multipart:
-      max-file-size: 20MB
-      max-request-size: 20MB
+      max-file-size: ${MAX_FILE_SIZE:20MB}
+      max-request-size: ${MAX_REQUEST_SIZE:20MB}
 
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: false
+
+# Azure Configuration
 azure:
-  document:
-    endpoint: ${FORM_ENDPOINT}
-    key: ${FORM_KEY}
-    model-id: ${MODEL_ID}
+  form-recognizer:
+    endpoint: ${AZURE_FORM_RECOGNIZER_ENDPOINT:}
+    key: ${AZURE_FORM_RECOGNIZER_KEY:}
+    model-id: ${AZURE_FORM_RECOGNIZER_MODEL_ID:prebuilt-invoice}
+  
+  storage:
+    account-name: ${AZURE_STORAGE_ACCOUNT_NAME:}
+    account-key: ${AZURE_STORAGE_ACCOUNT_KEY:}
+    container-name: ${AZURE_STORAGE_CONTAINER_NAME:documents}
+  
+  search:
+    endpoint: ${AZURE_SEARCH_ENDPOINT:}
+    key: ${AZURE_SEARCH_KEY:}
+    index-name: ${AZURE_SEARCH_INDEX_NAME:documents-index}
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:default-secret-key-for-development-only-change-in-production}
+  expiration: ${JWT_EXPIRATION_MS:3600000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION_MS:86400000}
+
+# Keycloak Configuration
+keycloak:
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://localhost:8081}
+  realm: ${KEYCLOAK_REALM:document-analyzer}
+  resource: ${KEYCLOAK_RESOURCE:document-analyzer-client}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET:}
+
+# CORS Configuration
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200,http://localhost:8080}
+
+# Logging
+logging:
+  level:
+    ai.document.analyzer: ${LOG_LEVEL:INFO}
+    org.springframework.web: ${LOG_LEVEL:INFO}
+    org.hibernate: WARN
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+  health:
+    defaults:
+      enabled: true

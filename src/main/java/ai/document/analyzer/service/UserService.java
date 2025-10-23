@@ -26,6 +26,12 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("Benutzer mit ID " + id + " wurde nicht gefunden"));
     }
 
+    @Transactional(readOnly = true)
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElse(null);
+    }
+
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }

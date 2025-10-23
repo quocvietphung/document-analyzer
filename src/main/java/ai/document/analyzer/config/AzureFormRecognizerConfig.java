@@ -6,13 +6,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AzureFormRecognizerConfig {
 
-    @Value("${azure.document.endpoint}")
+    @Value("${azure.form-recognizer.endpoint}")
     private String endpoint;
 
-    @Value("${azure.document.key}")
+    @Value("${azure.form-recognizer.key}")
     private String key;
 
-    @Value("${azure.document.model-id}")
+    @Value("${azure.form-recognizer.model-id}")
     private String modelId;
 
     public String getEndpoint() { return endpoint; }

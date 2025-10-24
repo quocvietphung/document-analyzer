@@ -29,9 +29,11 @@ export class LoginComponent {
   onLogin() {
     this.apiService.login(this.email, this.password).subscribe({
       next: (res: any) => {
-        localStorage.setItem('user', JSON.stringify(res.user));
-        localStorage.setItem('userId', res.user.id);
-        localStorage.setItem('token', 'fake-token');
+        // Store JWT tokens from response
+        localStorage.setItem('accessToken', res.accessToken);
+        localStorage.setItem('refreshToken', res.refreshToken);
+        // Note: userId is now extracted from JWT on the backend
+        // We can decode the token on frontend if needed, but not storing separately
 
         this.router.navigate(['/documents']);
       },

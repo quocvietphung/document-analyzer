@@ -4,9 +4,9 @@ import { inject } from '@angular/core';
 export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
 
-  // Chỉ dùng localStorage nếu đang chạy trong browser
+  // Check for JWT access token in browser localStorage
   const token = (typeof window !== 'undefined')
-    ? localStorage.getItem('token')
+    ? localStorage.getItem('accessToken')
     : null;
 
   if (token) {

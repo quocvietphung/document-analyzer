@@ -35,7 +35,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 })
 export class DocumentManagement implements OnInit {
   documents: any[] = [];
-  userId: string | null = null;
 
   // Viewer state
   viewerOpen = false;
@@ -57,17 +56,12 @@ export class DocumentManagement implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (typeof window !== 'undefined') {
-      this.userId = localStorage.getItem('userId');
-      console.log('📌 Loaded userId from localStorage:', this.userId);
-    }
-    if (this.userId) this.loadDocuments();
+    this.loadDocuments();
   }
 
   // ==== Load documents ====
   loadDocuments(): void {
-    if (!this.userId) return;
-    this.apiService.getUserDocuments(this.userId).subscribe({
+    this.apiService.getUserDocuments().subscribe({
       next: (res) => (this.documents = res.documents || []),
       error: (err) => {
         console.error('❌ Failed to fetch documents:', err);
@@ -79,11 +73,11 @@ export class DocumentManagement implements OnInit {
   // ==== Upload document ====
   onFileSelected(event: any): void {
     const file: File = event.target.files?.[0];
-    if (file && this.userId) {
+    if (file) {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('type', 'GENERAL');
-      formData.append('userId', this.userId);
+      // userId is now read from JWT token on backend
 
       this.apiService.uploadDocument(formData).subscribe({
         next: () => this.loadDocuments(),
@@ -98,8 +92,7 @@ export class DocumentManagement implements OnInit {
 
   // ==== Delete document ====
   deleteDocument(docId: string): void {
-    if (!this.userId) return;
-    this.apiService.deleteDocument(docId, this.userId).subscribe({
+    this.apiService.deleteDocument(docId).subscribe({
       next: () => (this.documents = this.documents.filter(d => d.id !== docId)),
       error: (err) => {
         console.error('❌ Delete failed:', err);
@@ -110,11 +103,10 @@ export class DocumentManagement implements OnInit {
 
   // ==== Open viewer ====
   viewDocument(doc: { id: string; fileName: string }): void {
-    if (!this.userId) return;
     this.loadingViewer = true;
     this.viewerName = doc.fileName || 'Document';
 
-    this.apiService.viewDocument(doc.id, this.userId).subscribe({
+    this.apiService.viewDocument(doc.id).subscribe({
       next: (res) => {
         const blob = res.body as Blob;
         const url = URL.createObjectURL(blob);
@@ -150,11 +142,10 @@ export class DocumentManagement implements OnInit {
 
   // ==== Analyze document ====
   analyzeDocument(doc: { id: string; fileName: string }): void {
-    if (!this.userId) return;
     this.analyzing = true;
     this.analyzeOpen = true;
 
-    this.apiService.viewDocument(doc.id, this.userId).subscribe({
+    this.apiService.viewDocument(doc.id).subscribe({
       next: (res) => {
         const blob = res.body as Blob;
         const file = new File([blob], doc.fileName, { type: blob.type });
